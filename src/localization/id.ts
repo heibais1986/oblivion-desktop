@@ -267,6 +267,28 @@ const indonesia: Language = {
         upload_speed: 'Kecepatan upload',
         latency: 'Latensi',
         jitter: 'Jitter'
+    },
+    rules: {
+        title: 'Aturan Routing',
+        subtitle: 'Konfigurasi lalu lintas mana yang harus melewati koneksi VPN',
+        save_changes: 'Simpan Perubahan',
+        reset: 'Reset',
+        mode_ruleset: 'Set Aturan',
+        mode_blacklist: 'Daftar Hitam',
+        mode_whitelist: 'Daftar Putih',
+        mode_ruleset_desc: 'Gunakan koleksi aturan yang telah ditentukan',
+        mode_blacklist_desc: 'Tentukan apa yang melalui proxy',
+        mode_whitelist_desc: 'Tentukan apa yang terhubung langsung',
+        select_rule_sets: 'Pilih Set Aturan',
+        select_rule_sets_desc: 'Pilih dari koleksi aturan yang telah ditentukan berdasarkan Loyalsoldier/clash-rules',
+        direct_connection: 'Koneksi Langsung',
+        proxy_connection: 'Koneksi Proxy',
+        block_reject: 'Blokir/Tolak',
+        generated_rules_preview: 'Pratinjau Aturan yang Dihasilkan',
+        blacklist_rules_syntax: 'Sintaks Aturan Daftar Hitam:',
+        whitelist_rules_syntax: 'Sintaks Aturan Daftar Putih:',
+        examples: 'Contoh',
+        no_rules_generated: 'Tidak ada aturan yang dihasilkan'
     }
 };
 export default indonesia;

@@ -334,9 +334,9 @@ const Rules: React.FC = () => {
         <div className="rules-page">
             <div className="rules-header">
                 <div className="rules-title">
-                    <h2>Routing Rules</h2>
+                    <h2>{appLang?.rules?.title}</h2>
                     <p className="rules-subtitle">
-                        Configure which traffic should bypass the VPN connection
+                        {appLang?.rules?.subtitle}
                     </p>
                 </div>
                 
@@ -348,7 +348,7 @@ const Rules: React.FC = () => {
                             title="Reset changes (Ctrl+Z)"
                         >
                             <i className="material-icons">undo</i>
-                            Reset
+                            {appLang?.rules?.reset}
                         </button>
                         <button 
                             className="btn btn-primary"
@@ -356,7 +356,7 @@ const Rules: React.FC = () => {
                             title="Save changes (Ctrl+S)"
                         >
                             <i className="material-icons">save</i>
-                            Save Changes
+                            {appLang?.rules?.save_changes}
                         </button>
                     </div>
                 )}
@@ -388,24 +388,24 @@ const Rules: React.FC = () => {
                         onClick={() => handleModeChange('ruleset')}
                     >
                         <i className="material-icons">rule</i>
-                        <span>Rule Sets</span>
-                        <small>Use predefined rule collections</small>
+                        <span>{appLang?.rules?.mode_ruleset}</span>
+                        <small>{appLang?.rules?.mode_ruleset_desc}</small>
                     </button>
                     <button 
                         className={classNames('mode-tab', { active: ruleMode === 'blacklist' })}
                         onClick={() => handleModeChange('blacklist')}
                     >
                         <i className="material-icons">block</i>
-                        <span>Blacklist</span>
-                        <small>Specify what goes through proxy</small>
+                        <span>{appLang?.rules?.mode_blacklist}</span>
+                        <small>{appLang?.rules?.mode_blacklist_desc}</small>
                     </button>
                     <button 
                         className={classNames('mode-tab', { active: ruleMode === 'whitelist' })}
                         onClick={() => handleModeChange('whitelist')}
                     >
                         <i className="material-icons">check_circle</i>
-                        <span>Whitelist</span>
-                        <small>Specify what connects directly</small>
+                        <span>{appLang?.rules?.mode_whitelist}</span>
+                        <small>{appLang?.rules?.mode_whitelist_desc}</small>
                     </button>
                 </div>
             </div>
@@ -414,8 +414,8 @@ const Rules: React.FC = () => {
             {ruleMode === 'ruleset' && (
                 <div className="ruleset-mode">
                     <div className="ruleset-header">
-                        <h3>Select Rule Sets</h3>
-                        <p>Choose from predefined rule collections based on Loyalsoldier/clash-rules</p>
+                        <h3>{appLang?.rules?.select_rule_sets}</h3>
+                        <p>{appLang?.rules?.select_rule_sets_desc}</p>
                     </div>
                     
                     <div className="ruleset-categories">
@@ -423,7 +423,7 @@ const Rules: React.FC = () => {
                         <div className="category-section">
                             <h4 className="category-title">
                                 <i className="material-icons">home</i>
-                                Direct Connection
+                                {appLang?.rules?.direct_connection}
                             </h4>
                             <div className="ruleset-grid">
                                 {ruleSets.filter(rs => rs.category === 'direct').map(ruleSet => (
@@ -454,7 +454,7 @@ const Rules: React.FC = () => {
                         <div className="category-section">
                             <h4 className="category-title">
                                 <i className="material-icons">vpn_lock</i>
-                                Proxy Connection
+                                {appLang?.rules?.proxy_connection}
                             </h4>
                             <div className="ruleset-grid">
                                 {ruleSets.filter(rs => rs.category === 'proxy').map(ruleSet => (
@@ -485,7 +485,7 @@ const Rules: React.FC = () => {
                         <div className="category-section">
                             <h4 className="category-title">
                                 <i className="material-icons">block</i>
-                                Block/Reject
+                                {appLang?.rules?.block_reject}
                             </h4>
                             <div className="ruleset-grid">
                                 {ruleSets.filter(rs => rs.category === 'block').map(ruleSet => (
@@ -519,8 +519,8 @@ const Rules: React.FC = () => {
             {ruleMode === 'blacklist' && (
                 <div className="custom-rules-mode">
                     <div className="mode-description">
-                        <h3>Blacklist Mode</h3>
-                        <p>Specify domains, IPs, or applications that should go through the proxy. Everything else will connect directly.</p>
+                        <h3>{appLang?.rules?.mode_blacklist}</h3>
+                        <p>{appLang?.rules?.mode_blacklist_desc}</p>
                     </div>
                     
                     <div className="rules-editor">
@@ -555,8 +555,8 @@ app:chrome.exe"
             {ruleMode === 'whitelist' && (
                 <div className="custom-rules-mode">
                     <div className="mode-description">
-                        <h3>Whitelist Mode</h3>
-                        <p>Specify domains, IPs, or applications that should connect directly. Everything else will go through the proxy.</p>
+                        <h3>{appLang?.rules?.mode_whitelist}</h3>
+                        <p>{appLang?.rules?.mode_whitelist_desc}</p>
                     </div>
                     
                     <div className="rules-editor">
@@ -589,9 +589,9 @@ app:wechat.exe"
 
             {/* 规则预览 */}
             <div className="rules-preview">
-                <h4>Generated Rules Preview</h4>
+                <h4>{appLang?.rules?.generated_rules_preview}</h4>
                 <div className="preview-content">
-                    <pre>{generateFinalRules() || 'No rules generated'}</pre>
+                    <pre>{generateFinalRules() || appLang?.rules?.no_rules_generated}</pre>
                 </div>
             </div>
 

@@ -268,6 +268,28 @@ const russian: Language = {
         upload_speed: 'Скорость выгрузки',
         latency: 'Задержка',
         jitter: 'Джиттер'
+    },
+    rules: {
+        title: 'Правила маршрутизации',
+        subtitle: 'Настройте, какой трафик должен обходить VPN-соединение',
+        save_changes: 'Сохранить изменения',
+        reset: 'Сбросить',
+        mode_ruleset: 'Наборы правил',
+        mode_blacklist: 'Черный список',
+        mode_whitelist: 'Белый список',
+        mode_ruleset_desc: 'Использовать предопределенные коллекции правил',
+        mode_blacklist_desc: 'Указать, что идет через прокси',
+        mode_whitelist_desc: 'Указать, что подключается напрямую',
+        select_rule_sets: 'Выбрать наборы правил',
+        select_rule_sets_desc: 'Выберите из предопределенных коллекций правил на основе Loyalsoldier/clash-rules',
+        direct_connection: 'Прямое соединение',
+        proxy_connection: 'Прокси соединение',
+        block_reject: 'Блокировать/Отклонить',
+        generated_rules_preview: 'Предварительный просмотр сгенерированных правил',
+        blacklist_rules_syntax: 'Синтаксис правил черного списка:',
+        whitelist_rules_syntax: 'Синтаксис правил белого списка:',
+        examples: 'Примеры',
+        no_rules_generated: 'Правила не сгенерированы'
     }
 };
 export default russian;

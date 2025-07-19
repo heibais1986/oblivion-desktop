@@ -271,6 +271,28 @@ const brazilianPortuguese: Language = {
         upload_speed: 'Velocidade de Upload',
         latency: 'Latência',
         jitter: 'Jitter'
+    },
+    rules: {
+        title: 'Regras de Roteamento',
+        subtitle: 'Configure qual tráfego deve contornar a conexão VPN',
+        save_changes: 'Salvar Alterações',
+        reset: 'Redefinir',
+        mode_ruleset: 'Conjuntos de Regras',
+        mode_blacklist: 'Lista Negra',
+        mode_whitelist: 'Lista Branca',
+        mode_ruleset_desc: 'Use coleções de regras predefinidas',
+        mode_blacklist_desc: 'Especifique o que passa pelo proxy',
+        mode_whitelist_desc: 'Especifique o que se conecta diretamente',
+        select_rule_sets: 'Selecionar Conjuntos de Regras',
+        select_rule_sets_desc: 'Escolha entre coleções de regras predefinidas baseadas em Loyalsoldier/clash-rules',
+        direct_connection: 'Conexão Direta',
+        proxy_connection: 'Conexão Proxy',
+        block_reject: 'Bloquear/Rejeitar',
+        generated_rules_preview: 'Visualização das Regras Geradas',
+        blacklist_rules_syntax: 'Sintaxe das Regras da Lista Negra:',
+        whitelist_rules_syntax: 'Sintaxe das Regras da Lista Branca:',
+        examples: 'Exemplos',
+        no_rules_generated: 'Nenhuma regra gerada'
     }
 };
 export default brazilianPortuguese;

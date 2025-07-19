@@ -258,6 +258,28 @@ const chinese: Language = {
         upload_speed: '上传速度',
         latency: '延迟',
         jitter: '抖动'
+    },
+    rules: {
+        title: '路由规则',
+        subtitle: '配置哪些流量应该绕过VPN连接',
+        save_changes: '保存更改',
+        reset: '重置',
+        mode_ruleset: '规则集',
+        mode_blacklist: '黑名单',
+        mode_whitelist: '白名单',
+        mode_ruleset_desc: '使用预定义的规则集合',
+        mode_blacklist_desc: '指定哪些流量走代理',
+        mode_whitelist_desc: '指定哪些流量直连',
+        select_rule_sets: '选择规则集',
+        select_rule_sets_desc: '从基于 Loyalsoldier/clash-rules 的预定义规则集合中选择',
+        direct_connection: '直连',
+        proxy_connection: '代理连接',
+        block_reject: '阻止/拒绝',
+        generated_rules_preview: '生成的规则预览',
+        blacklist_rules_syntax: '黑名单规则语法：',
+        whitelist_rules_syntax: '白名单规则语法：',
+        examples: '示例',
+        no_rules_generated: '未生成规则'
     }
 };
 export default chinese;

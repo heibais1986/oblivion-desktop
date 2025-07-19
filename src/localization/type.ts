@@ -262,6 +262,29 @@ export interface SpeedTest {
     jitter: string;
 }
 
+export interface Rules {
+    title: string;
+    subtitle: string;
+    save_changes: string;
+    reset: string;
+    mode_ruleset: string;
+    mode_blacklist: string;
+    mode_whitelist: string;
+    mode_ruleset_desc: string;
+    mode_blacklist_desc: string;
+    mode_whitelist_desc: string;
+    select_rule_sets: string;
+    select_rule_sets_desc: string;
+    direct_connection: string;
+    proxy_connection: string;
+    block_reject: string;
+    generated_rules_preview: string;
+    blacklist_rules_syntax: string;
+    whitelist_rules_syntax: string;
+    examples: string;
+    no_rules_generated: string;
+}
+
 export interface Language {
     global: Global;
     status: Status;
@@ -275,4 +298,5 @@ export interface Language {
     systemTray: SystemTray;
     update: Update;
     speedTest: SpeedTest;
+    rules: Rules;
 }

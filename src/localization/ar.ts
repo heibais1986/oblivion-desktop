@@ -262,6 +262,28 @@ const arabic: Language = {
         upload_speed: 'سرعة الرفع',
         latency: 'التأخير',
         jitter: 'التذبذب'
+    },
+    rules: {
+        title: 'قواعد التوجيه',
+        subtitle: 'تكوين أي حركة مرور يجب أن تتجاوز اتصال VPN',
+        save_changes: 'حفظ التغييرات',
+        reset: 'إعادة تعيين',
+        mode_ruleset: 'مجموعات القواعد',
+        mode_blacklist: 'القائمة السوداء',
+        mode_whitelist: 'القائمة البيضاء',
+        mode_ruleset_desc: 'استخدام مجموعات القواعد المحددة مسبقاً',
+        mode_blacklist_desc: 'تحديد ما يمر عبر البروكسي',
+        mode_whitelist_desc: 'تحديد ما يتصل مباشرة',
+        select_rule_sets: 'اختيار مجموعات القواعد',
+        select_rule_sets_desc: 'اختر من مجموعات القواعد المحددة مسبقاً بناءً على Loyalsoldier/clash-rules',
+        direct_connection: 'الاتصال المباشر',
+        proxy_connection: 'اتصال البروكسي',
+        block_reject: 'حظر/رفض',
+        generated_rules_preview: 'معاينة القواعد المُنشأة',
+        blacklist_rules_syntax: 'صيغة قواعد القائمة السوداء:',
+        whitelist_rules_syntax: 'صيغة قواعد القائمة البيضاء:',
+        examples: 'أمثلة',
+        no_rules_generated: 'لم يتم إنشاء قواعد'
     }
 };
 export default arabic;

@@ -269,6 +269,28 @@ const turkish: Language = {
         upload_speed: 'Yükleme Hızı',
         latency: 'Gecikme',
         jitter: 'Jitter'
+    },
+    rules: {
+        title: 'Yönlendirme Kuralları',
+        subtitle: 'VPN bağlantısını hangi trafiğin atlaması gerektiğini yapılandırın',
+        save_changes: 'Değişiklikleri Kaydet',
+        reset: 'Sıfırla',
+        mode_ruleset: 'Kural Setleri',
+        mode_blacklist: 'Kara Liste',
+        mode_whitelist: 'Beyaz Liste',
+        mode_ruleset_desc: 'Önceden tanımlanmış kural koleksiyonlarını kullan',
+        mode_blacklist_desc: 'Proxy üzerinden geçecekleri belirtin',
+        mode_whitelist_desc: 'Doğrudan bağlanacakları belirtin',
+        select_rule_sets: 'Kural Setlerini Seç',
+        select_rule_sets_desc: 'Loyalsoldier/clash-rules tabanlı önceden tanımlanmış kural koleksiyonlarından seçin',
+        direct_connection: 'Doğrudan Bağlantı',
+        proxy_connection: 'Proxy Bağlantısı',
+        block_reject: 'Engelle/Reddet',
+        generated_rules_preview: 'Oluşturulan Kurallar Önizlemesi',
+        blacklist_rules_syntax: 'Kara Liste Kuralları Sözdizimi:',
+        whitelist_rules_syntax: 'Beyaz Liste Kuralları Sözdizimi:',
+        examples: 'Örnekler',
+        no_rules_generated: 'Kural oluşturulmadı'
     }
 };
 export default turkish;

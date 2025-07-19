@@ -265,6 +265,28 @@ const english: Language = {
         upload_speed: 'Upload Speed',
         latency: 'Latency',
         jitter: 'Jitter'
+    },
+    rules: {
+        title: 'Routing Rules',
+        subtitle: 'Configure which traffic should bypass the VPN connection',
+        save_changes: 'Save Changes',
+        reset: 'Reset',
+        mode_ruleset: 'Rule Sets',
+        mode_blacklist: 'Blacklist',
+        mode_whitelist: 'Whitelist',
+        mode_ruleset_desc: 'Use predefined rule collections',
+        mode_blacklist_desc: 'Specify what goes through proxy',
+        mode_whitelist_desc: 'Specify what connects directly',
+        select_rule_sets: 'Select Rule Sets',
+        select_rule_sets_desc: 'Choose from predefined rule collections based on Loyalsoldier/clash-rules',
+        direct_connection: 'Direct Connection',
+        proxy_connection: 'Proxy Connection',
+        block_reject: 'Block/Reject',
+        generated_rules_preview: 'Generated Rules Preview',
+        blacklist_rules_syntax: 'Blacklist Rules Syntax:',
+        whitelist_rules_syntax: 'Whitelist Rules Syntax:',
+        examples: 'Examples',
+        no_rules_generated: 'No rules generated'
     }
 };
 export default english;
