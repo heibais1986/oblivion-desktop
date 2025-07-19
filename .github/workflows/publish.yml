@@ -21,7 +21,12 @@ jobs:
 
             - name: Prepare Release Message
               run: |
-                  sed 's|RELEASE_TAG|${{ github.ref_name }}|g' ./.github/release_message.md >> release.md
+                  if [[ "${{ github.ref_name }}" == "v2.101.1" ]]; then
+                    sed 's|RELEASE_TAG|${{ github.ref_name }}|g' ./.github/release_message_v2.101.1.md >> release.md
+                  else
+                    sed 's|RELEASE_TAG|${{ github.ref_name }}|g' ./.github/release_message.md >> release.md
+                  fi
+              shell: bash
 
             - name: Set Release Message
               uses: softprops/action-gh-release@v2
