@@ -1,22 +1,29 @@
 <div dir="rtl">
 
-## نسخه v2.101.1 با ویرایشگر قوانین مسیریابی بصری برای ویندوز، لینوکس و مک منتشر شد.
+## نسخه v2.101.1 با سیستم مدیریت قوانین مدرن برای ویندوز، لینوکس و مک منتشر شد.
 
 ### ✨ ویژگی‌های جدید:
 
-- [x] **ویرایشگر قوانین بصری**: رابط کاربری جدید و بصری برای مدیریت قوانین مسیریابی
-- [x] **صفحه اختصاصی قوانین**: صفحه کامل مدیریت قوانین با قابلیت ویرایش درجا
-- [x] **پشتیبانی از 5 نوع قانون**: Domain، IP، GeoIP، Application، و IP Range
-- [x] **کنترل‌های قانون**: کلید فعال/غیرفعال برای هر قانون
+- [x] **سیستم مدیریت قوانین مدرن**: جایگزینی کامل ویرایشگر قدیمی با رابط کاربری مدرن
+- [x] **سه حالت قوانین**: Rule Sets، Blacklist، Whitelist (الهام از Loyalsoldier/clash-rules)
+- [x] **12 مجموعه قانون از پیش تعریف شده**: شامل Google، Apple، GFW، CN CIDR و غیره
+- [x] **رابط کاربری کارت‌محور**: کارت‌های زیبا با کلیدهای تغییر وضعیت
+- [x] **دسته‌بندی هوشمند**: قوانین مستقیم، پروکسی و مسدود
+- [x] **پیش‌نمایش زنده**: نمایش قوانین نهایی تولید شده
 - [x] **پشتیبانی چندزبانه**: ترجمه تب قوانین به 13 زبان
-- [x] **میانبرهای صفحه‌کلید**: Ctrl+S برای ذخیره، Ctrl+Z برای بازنشانی
 
 ### 🚀 بهبودها:
 
-- [x] **تجربه کاربری بهتر**: رابط کاربری کارت‌محور به جای ویرایشگر متن
-- [x] **اعتبارسنجی هوشمند**: تجزیه و اعتبارسنجی خودکار قوانین
-- [x] **طراحی واکنش‌گرا**: کار کامل در تمام اندازه‌های صفحه
-- [x] **پشتیبانی از تم**: سازگاری کامل با تم تاریک/روشن
+- [x] **تجربه کاربری عالی**: حذف ویرایش دستی پیچیده قوانین
+- [x] **انتخاب آسان**: کلیک ساده برای فعال/غیرفعال کردن مجموعه قوانین
+- [x] **طراحی واکنش‌گرا**: سازگار با تمام اندازه‌های صفحه
+- [x] **پشتیبانی کامل از تم**: تم تاریک/روشن با انیمیشن‌های نرم
+
+### 🎯 حالت‌های جدید:
+
+- [x] **Rule Sets**: انتخاب از مجموعه‌های از پیش تعریف شده
+- [x] **Blacklist**: مشخص کردن چه چیزی از پروکسی عبور کند
+- [x] **Whitelist**: مشخص کردن چه چیزی مستقیماً متصل شود
 
 #### گزارش مشکل یا ارائه پیشنهاد:
 
@@ -24,47 +31,58 @@ https://github.com/heibais1986/oblivion-desktop/issues
 
 </div>
 
-## 🎉 Version v2.101.1 with Visual Routing Rules Editor released for Windows, Linux & macOS.
+## 🎉 Version v2.101.1 with Modern Rules Management System released for Windows, Linux & macOS.
 
-### ✨ New Features:
+### ✨ Revolutionary New Features:
 
-- [x] **Visual Rules Editor**: Brand new visual interface for managing routing rules
-- [x] **Dedicated Rules Page**: Complete rule management with inline editing capabilities
-- [x] **5 Rule Types Support**: Domain, IP, GeoIP, Application, and IP Range rules
-- [x] **Rule Controls**: Individual enable/disable toggles for each rule
+- [x] **Modern Rules Management**: Complete redesign replacing primitive rule editor with modern interface
+- [x] **3 Rule Modes**: Rule Sets, Blacklist, Whitelist (inspired by Loyalsoldier/clash-rules)
+- [x] **12 Predefined Rule Sets**: Google, Apple, GFW, CN CIDR, Telegram, and more
+- [x] **Card-based Interface**: Beautiful cards with toggle switches for easy management
+- [x] **Smart Categorization**: Direct, Proxy, and Block rule categories
+- [x] **Live Preview**: Real-time generation of final rules
 - [x] **Multi-language Support**: Rules tab translated to 13 languages
-- [x] **Keyboard Shortcuts**: Ctrl+S to save, Ctrl+Z to reset changes
 
-### 🚀 Improvements:
+### 🚀 Major Improvements:
 
-- [x] **Better UX**: Intuitive card-based interface replaces text editor
-- [x] **Smart Validation**: Automatic rule parsing and validation
-- [x] **Responsive Design**: Works perfectly on all screen sizes  
-- [x] **Theme Support**: Full dark/light theme compatibility
-- [x] **Rule Statistics**: Shows total and enabled rule counts
+- [x] **Superior UX**: No more manual rule editing - just click to enable/disable
+- [x] **Easy Selection**: Simple toggle switches for rule set activation
+- [x] **Responsive Design**: Perfect on all screen sizes with smooth animations
+- [x] **Full Theme Support**: Dark/light themes with beautiful transitions
+- [x] **Intelligent Defaults**: Pre-configured rule sets for common scenarios
 
-### 🛠️ Technical Details:
+### 🎯 Three Powerful Modes:
 
-- [x] **Full Compatibility**: Maintains compatibility with existing rule configurations
-- [x] **Enhanced Parsing**: Better rule parsing with improved error handling
-- [x] **Performance**: Optimized for large rule sets
-- [x] **Type Safety**: Type-safe implementation with TypeScript
+- [x] **Rule Sets Mode**: Choose from 12 predefined rule collections
+  - **Direct**: Private, LAN CIDR, Apple, iCloud, CN CIDR, Direct
+  - **Proxy**: Google, GFW, Proxy, TLD-NOT-CN, Telegram CIDR
+  - **Block**: Reject (Ad domains)
+- [x] **Blacklist Mode**: Specify what traffic goes through proxy
+- [x] **Whitelist Mode**: Specify what traffic connects directly
 
-### 📱 How to Use:
+### 🛠️ Technical Excellence:
+
+- [x] **Based on Loyalsoldier/clash-rules**: Industry-standard rule collections
+- [x] **Automatic Rule Generation**: Smart conversion to Oblivion format
+- [x] **Priority Sorting**: Intelligent rule ordering for optimal performance
+- [x] **Full Compatibility**: Seamless migration from old rule format
+
+### 📱 How to Use the New System:
 
 1. **Open Oblivion Desktop**
 2. **Click the "Rules" tab** at the bottom navigation
-3. **Add Rules**: Use "Add Rule" button to create new routing rules
-4. **Manage Rules**: Toggle on/off, edit inline, or delete rules as needed
-5. **Save Changes**: Use Ctrl+S or click the Save button
+3. **Choose Your Mode**: Rule Sets, Blacklist, or Whitelist
+4. **Configure Rules**:
+   - **Rule Sets**: Toggle predefined rule collections on/off
+   - **Blacklist**: Enter domains/IPs that should use proxy
+   - **Whitelist**: Enter domains/IPs that should connect directly
+5. **Preview & Save**: Check the generated rules and save changes
 
-### 🎯 Rule Types Explained:
+### 🎯 Predefined Rule Sets Explained:
 
-- **🌐 Domain**: Match domain names (e.g., `google.com`, `*.example.com`, `!blocked.com`)
-- **🔢 IP**: Match specific IP addresses (e.g., `192.168.1.1`)
-- **📊 Range**: Match IP ranges using CIDR notation (e.g., `192.168.0.0/24`)
-- **📱 App**: Match specific applications by process name (e.g., `chrome.exe`)
-- **🌍 GeoIP**: Match traffic by geographic location (e.g., `ir`, `cn`, `us`)
+- **🏠 Direct Connection**: Private, LAN CIDR, Apple, iCloud, CN CIDR
+- **🔒 Proxy Connection**: Google, GFW, Proxy, TLD-NOT-CN, Telegram
+- **🚫 Block/Reject**: Advertisement and tracking domains
 
 #### To report issues or provide suggestions:
 
