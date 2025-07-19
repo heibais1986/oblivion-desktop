@@ -7,10 +7,8 @@ import { useStore } from '../../store';
 import { settingsHaveChangedToast } from '../../lib/toasts';
 import { defaultSettings } from '../../../defaultSettings';
 import Tabs from '../../components/Tabs';
+import { RulesConfigManager, RuleMode } from '../../lib/rulesConfig';
 import './Rules.css';
-
-// 规则模式类型
-type RuleMode = 'ruleset' | 'blacklist' | 'whitelist';
 
 // 预定义规则集
 interface RuleSet {
@@ -32,7 +30,7 @@ const RULE_SETS: RuleSet[] = [
         category: 'block',
         url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt',
         rules: ['DOMAIN-SUFFIX,doubleclick.net', 'DOMAIN-SUFFIX,googleadservices.com'],
-        enabled: false
+        enabled: true
     },
     {
         id: 'loyalsoldier-icloud',
@@ -41,7 +39,7 @@ const RULE_SETS: RuleSet[] = [
         category: 'direct',
         url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt',
         rules: ['DOMAIN-SUFFIX,icloud.com', 'DOMAIN-SUFFIX,apple-cloudkit.com'],
-        enabled: false
+        enabled: true
     },
     {
         id: 'loyalsoldier-apple',
@@ -50,7 +48,7 @@ const RULE_SETS: RuleSet[] = [
         category: 'direct',
         url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt',
         rules: ['DOMAIN-SUFFIX,apple.com', 'DOMAIN-SUFFIX,apple.com.cn'],
-        enabled: false
+        enabled: true
     },
     {
         id: 'loyalsoldier-google',
@@ -77,7 +75,7 @@ const RULE_SETS: RuleSet[] = [
         category: 'direct',
         url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt',
         rules: ['DOMAIN-SUFFIX,baidu.com', 'DOMAIN-SUFFIX,qq.com'],
-        enabled: false
+        enabled: true
     },
     {
         id: 'loyalsoldier-private',
@@ -95,7 +93,7 @@ const RULE_SETS: RuleSet[] = [
         category: 'proxy',
         url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt',
         rules: ['DOMAIN-SUFFIX,github.com', 'DOMAIN-SUFFIX,stackoverflow.com'],
-        enabled: false
+        enabled: true
     },
     {
         id: 'loyalsoldier-tld-not-cn',
@@ -122,7 +120,7 @@ const RULE_SETS: RuleSet[] = [
         category: 'direct',
         url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt',
         rules: ['IP-CIDR,1.0.1.0/24', 'IP-CIDR,1.0.2.0/23'],
-        enabled: false
+        enabled: true
     },
     {
         id: 'loyalsoldier-lancidr',
@@ -141,7 +139,6 @@ const Rules: React.FC = () => {
     const [ruleMode, setRuleMode] = useState<RuleMode>('ruleset');
     const [proxyMode, setProxyMode] = useState<string>('');
     const [isLoaded, setIsLoaded] = useState(false);
-    const [hasChanges, setHasChanges] = useState(false);
     
     // 规则集状态
     const [ruleSets, setRuleSets] = useState<RuleSet[]>(RULE_SETS);
@@ -153,36 +150,31 @@ const Rules: React.FC = () => {
     useEffect(() => {
         const loadSettings = async () => {
             try {
-                const [routingRulesValue, proxyModeValue, ruleModeValue, ruleSetValue] = await Promise.all([
-                    settings.get('routingRules'),
-                    settings.get('proxyMode'),
-                    settings.get('ruleMode'),
-                    settings.get('selectedRuleSets')
-                ]);
-
-                // 加载规则模式
-                const savedRuleMode = typeof ruleModeValue === 'undefined' ? 'ruleset' : ruleModeValue as RuleMode;
-                setRuleMode(savedRuleMode);
-                
                 // 加载代理模式
+                const proxyModeValue = await settings.get('proxyMode');
                 setProxyMode(typeof proxyModeValue === 'undefined' 
                     ? defaultSettings.proxyMode 
                     : proxyModeValue as string);
 
-                // 加载规则集选择状态
-                if (ruleSetValue) {
-                    const selectedIds = JSON.parse(ruleSetValue as string);
-                    setRuleSets(prev => prev.map(rs => ({
-                        ...rs,
-                        enabled: selectedIds.includes(rs.id)
-                    })));
-                }
+                // 从新的配置管理器加载配置
+                const currentMode = await RulesConfigManager.getCurrentMode();
+                setRuleMode(currentMode);
 
-                // 加载自定义规则
-                const routingRules = typeof routingRulesValue === 'undefined' 
-                    ? defaultSettings.routingRules 
-                    : routingRulesValue as string;
-                setCustomRules(routingRules);
+                // 加载规则集配置
+                const ruleSetConfig = await RulesConfigManager.getRuleSetConfig();
+                setRuleSets(prev => prev.map(rs => ({
+                    ...rs,
+                    enabled: ruleSetConfig[rs.id] !== undefined ? ruleSetConfig[rs.id] : rs.enabled
+                })));
+
+                // 根据当前模式加载对应的自定义规则
+                if (currentMode === 'blacklist') {
+                    const blacklistRules = await RulesConfigManager.getBlacklistRules();
+                    setCustomRules(blacklistRules);
+                } else if (currentMode === 'whitelist') {
+                    const whitelistRules = await RulesConfigManager.getWhitelistRules();
+                    setCustomRules(whitelistRules);
+                }
                 
                 setIsLoaded(true);
             } catch (error) {
@@ -194,31 +186,83 @@ const Rules: React.FC = () => {
         loadSettings();
     }, []);
 
-    // 处理规则集切换
-    const handleRuleSetToggle = useCallback((ruleSetId: string) => {
-        setRuleSets(prev => prev.map(rs => 
+    // 处理规则集切换 - 立即保存
+    const handleRuleSetToggle = useCallback(async (ruleSetId: string) => {
+        const newRuleSets = ruleSets.map(rs => 
             rs.id === ruleSetId ? { ...rs, enabled: !rs.enabled } : rs
-        ));
-        setHasChanges(true);
-    }, []);
+        );
+        setRuleSets(newRuleSets);
+        
+        // 立即保存到配置文件
+        const ruleSetConfig = newRuleSets.reduce((acc, rs) => {
+            acc[rs.id] = rs.enabled;
+            return acc;
+        }, {} as { [key: string]: boolean });
+        
+        await RulesConfigManager.saveRuleSetConfig(ruleSetConfig);
+        await saveCurrentRulesToSettings(ruleMode, newRuleSets, customRules);
+        settingsHaveChangedToast({ isConnected, isLoading, appLang });
+    }, [ruleSets, ruleMode, customRules, isConnected, isLoading, appLang]);
 
-    // 处理模式切换
-    const handleModeChange = useCallback((mode: RuleMode) => {
+    // 处理模式切换 - 立即保存并加载对应配置
+    const handleModeChange = useCallback(async (mode: RuleMode) => {
+        // 保存当前模式的配置
+        if (ruleMode === 'blacklist') {
+            await RulesConfigManager.saveBlacklistRules(customRules);
+        } else if (ruleMode === 'whitelist') {
+            await RulesConfigManager.saveWhitelistRules(customRules);
+        }
+        
+        // 切换模式
         setRuleMode(mode);
-        setHasChanges(true);
-    }, []);
+        await RulesConfigManager.setCurrentMode(mode);
+        
+        // 加载新模式的配置
+        if (mode === 'blacklist') {
+            const blacklistRules = await RulesConfigManager.getBlacklistRules();
+            setCustomRules(blacklistRules);
+        } else if (mode === 'whitelist') {
+            const whitelistRules = await RulesConfigManager.getWhitelistRules();
+            setCustomRules(whitelistRules);
+        } else {
+            setCustomRules('');
+        }
+        
+        await saveCurrentRulesToSettings(mode, ruleSets, mode === 'blacklist' ? await RulesConfigManager.getBlacklistRules() : mode === 'whitelist' ? await RulesConfigManager.getWhitelistRules() : '');
+        settingsHaveChangedToast({ isConnected, isLoading, appLang });
+    }, [ruleMode, customRules, ruleSets, isConnected, isLoading, appLang]);
 
-    // 处理自定义规则更改
+    // 处理自定义规则更改 - 使用防抖延迟保存
     const handleCustomRulesChange = useCallback((rules: string) => {
         setCustomRules(rules);
-        setHasChanges(true);
     }, []);
 
-    // 生成最终的路由规则
-    const generateFinalRules = useCallback((): string => {
-        switch (ruleMode) {
+    // 处理输入框失焦 - 立即保存
+    const handleCustomRulesBlur = useCallback(async () => {
+        if (ruleMode === 'blacklist') {
+            await RulesConfigManager.saveBlacklistRules(customRules);
+        } else if (ruleMode === 'whitelist') {
+            await RulesConfigManager.saveWhitelistRules(customRules);
+        }
+        await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules);
+        settingsHaveChangedToast({ isConnected, isLoading, appLang });
+    }, [ruleMode, customRules, ruleSets, isConnected, isLoading, appLang]);
+
+    // 保存当前规则到系统设置
+    const saveCurrentRulesToSettings = useCallback(async (mode: RuleMode, currentRuleSets: RuleSet[], currentCustomRules: string) => {
+        try {
+            const finalRules = generateFinalRulesForMode(mode, currentRuleSets, currentCustomRules);
+            await settings.set('routingRules', finalRules);
+        } catch (error) {
+            console.error('Failed to save rules to settings:', error);
+        }
+    }, []);
+
+    // 为指定模式生成最终规则
+    const generateFinalRulesForMode = useCallback((mode: RuleMode, currentRuleSets: RuleSet[], currentCustomRules: string): string => {
+        switch (mode) {
             case 'ruleset':
-                const enabledRuleSets = ruleSets.filter(rs => rs.enabled);
+                const enabledRuleSets = currentRuleSets.filter(rs => rs.enabled);
                 const allRules: string[] = [];
                 
                 // 按优先级排序：block > direct > proxy
@@ -246,78 +290,17 @@ const Rules: React.FC = () => {
                 
             case 'blacklist':
             case 'whitelist':
-                return customRules;
+                return currentCustomRules;
                 
             default:
                 return '';
         }
-    }, [ruleMode, ruleSets, customRules]);
-
-    // 保存设置
-    const handleSaveRules = useCallback(async () => {
-        try {
-            const finalRules = generateFinalRules();
-            
-            await Promise.all([
-                settings.set('routingRules', finalRules),
-                settings.set('ruleMode', ruleMode),
-                settings.set('selectedRuleSets', JSON.stringify(ruleSets.filter(rs => rs.enabled).map(rs => rs.id)))
-            ]);
-            
-            setHasChanges(false);
-            settingsHaveChangedToast({ isConnected, isLoading, appLang });
-        } catch (error) {
-            console.error('Failed to save rules:', error);
-        }
-    }, [generateFinalRules, ruleMode, ruleSets, isConnected, isLoading, appLang]);
-
-    // 重置更改
-    const handleResetRules = useCallback(async () => {
-        try {
-            const [savedRuleMode, savedRuleSets, savedCustomRules] = await Promise.all([
-                settings.get('ruleMode'),
-                settings.get('selectedRuleSets'),
-                settings.get('routingRules')
-            ]);
-            
-            setRuleMode((savedRuleMode as RuleMode) || 'ruleset');
-            setCustomRules((savedCustomRules as string) || '');
-            
-            if (savedRuleSets) {
-                const selectedIds = JSON.parse(savedRuleSets as string);
-                setRuleSets(prev => prev.map(rs => ({
-                    ...rs,
-                    enabled: selectedIds.includes(rs.id)
-                })));
-            }
-            
-            setHasChanges(false);
-        } catch (error) {
-            console.error('Failed to reset rules:', error);
-        }
     }, []);
 
-    // Handle keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 's') {
-                    e.preventDefault();
-                    if (hasChanges) {
-                        handleSaveRules();
-                    }
-                } else if (e.key === 'z' && !e.shiftKey) {
-                    e.preventDefault();
-                    if (hasChanges) {
-                        handleResetRules();
-                    }
-                }
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [hasChanges, handleSaveRules, handleResetRules]);
+    // 生成最终的路由规则（用于预览）
+    const generateFinalRules = useCallback((): string => {
+        return generateFinalRulesForMode(ruleMode, ruleSets, customRules);
+    }, [ruleMode, ruleSets, customRules, generateFinalRulesForMode]);
 
     if (!isLoaded) {
         return (
@@ -336,30 +319,9 @@ const Rules: React.FC = () => {
                 <div className="rules-title">
                     <h2>{appLang?.rules?.title}</h2>
                     <p className="rules-subtitle">
-                        {appLang?.rules?.subtitle}
+                        {appLang?.rules?.subtitle} - 配置会自动保存
                     </p>
                 </div>
-                
-                {hasChanges && (
-                    <div className="rules-actions">
-                        <button 
-                            className="btn btn-secondary"
-                            onClick={handleResetRules}
-                            title="Reset changes (Ctrl+Z)"
-                        >
-                            <i className="material-icons">undo</i>
-                            {appLang?.rules?.reset}
-                        </button>
-                        <button 
-                            className="btn btn-primary"
-                            onClick={handleSaveRules}
-                            title="Save changes (Ctrl+S)"
-                        >
-                            <i className="material-icons">save</i>
-                            {appLang?.rules?.save_changes}
-                        </button>
-                    </div>
-                )}
             </div>
 
             {proxyMode !== 'none' && (
@@ -527,6 +489,7 @@ const Rules: React.FC = () => {
                         <textarea
                             value={customRules}
                             onChange={(e) => handleCustomRulesChange(e.target.value)}
+                            onBlur={handleCustomRulesBlur}
                             placeholder="Enter rules, one per line:
 domain:google.com
 domain:*.youtube.com
@@ -563,6 +526,7 @@ app:chrome.exe"
                         <textarea
                             value={customRules}
                             onChange={(e) => handleCustomRulesChange(e.target.value)}
+                            onBlur={handleCustomRulesBlur}
                             placeholder="Enter rules, one per line:
 domain:baidu.com
 domain:*.cn

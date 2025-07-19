@@ -47,7 +47,8 @@ export type settingsKeys =
     | 'DoH'
     | 'testUrl'
     | 'updaterVersion'
-    | 'networkList';
+    | 'networkList'
+    | 'rulesConfig';
 
 const date = new Date();
 const getTimeZone = date?.toString().toLowerCase();
@@ -101,7 +102,8 @@ export const defaultSettings = {
     plainDns: '',
     DoH: '',
     updaterVersion: null,
-    networkList: '[]'
+    networkList: '[]',
+    rulesConfig: ''
 };
 
 export const countries: { value: string; label: string }[] = [

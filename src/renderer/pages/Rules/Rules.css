@@ -2,7 +2,8 @@
     min-height: 100vh;
     background: var(--page-background);
     padding: 20px;
-    padding-bottom: 100px; /* Space for tabs */
+    padding-bottom: 100px;
+    /* Space for tabs */
 }
 
 /* 模式选择器 */
@@ -206,11 +207,11 @@
     border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: var(--accent-color);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     transform: translateX(26px);
 }
 
@@ -537,8 +538,13 @@ input:checked + .slider:before {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .loading-state p {
@@ -582,19 +588,19 @@ input:checked + .slider:before {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-    
+
     .mode-tab {
         flex-direction: row;
         text-align: left;
         padding: 15px;
     }
-    
+
     .mode-tab i {
         font-size: 1.5em;
         margin-bottom: 0;
         margin-right: 15px;
     }
-    
+
     .ruleset-grid {
         grid-template-columns: 1fr;
     }
@@ -606,27 +612,27 @@ input:checked + .slider:before {
         padding: 15px;
         padding-bottom: 100px;
     }
-    
+
     .rules-header {
         flex-direction: column;
         gap: 20px;
         align-items: stretch;
     }
-    
+
     .rules-actions {
         justify-content: center;
     }
-    
+
     .rules-info {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .alert {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .alert i {
         align-self: center;
     }
@@ -637,12 +643,12 @@ input:checked + .slider:before {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .rules-actions .btn {
         width: 100%;
         justify-content: center;
     }
-    
+
     .info-section {
         padding: 15px;
     }
