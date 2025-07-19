@@ -6,37 +6,183 @@ import useTranslate from '../../../localization/useTranslate';
 import { useStore } from '../../store';
 import { settingsHaveChangedToast } from '../../lib/toasts';
 import { defaultSettings } from '../../../defaultSettings';
-import RuleEditor, { Rule } from '../../components/RuleEditor';
 import Tabs from '../../components/Tabs';
 import './Rules.css';
+
+// 规则模式类型
+type RuleMode = 'ruleset' | 'blacklist' | 'whitelist';
+
+// 预定义规则集
+interface RuleSet {
+    id: string;
+    name: string;
+    description: string;
+    category: string;
+    url?: string;
+    rules: string[];
+    enabled: boolean;
+}
+
+// 预定义规则集数据
+const RULE_SETS: RuleSet[] = [
+    {
+        id: 'loyalsoldier-reject',
+        name: 'Reject',
+        description: '广告域名列表',
+        category: 'block',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt',
+        rules: ['DOMAIN-SUFFIX,doubleclick.net', 'DOMAIN-SUFFIX,googleadservices.com'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-icloud',
+        name: 'iCloud',
+        description: 'iCloud 域名列表',
+        category: 'direct',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt',
+        rules: ['DOMAIN-SUFFIX,icloud.com', 'DOMAIN-SUFFIX,apple-cloudkit.com'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-apple',
+        name: 'Apple',
+        description: 'Apple 在中国大陆可直连的域名列表',
+        category: 'direct',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt',
+        rules: ['DOMAIN-SUFFIX,apple.com', 'DOMAIN-SUFFIX,apple.com.cn'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-google',
+        name: 'Google',
+        description: 'Google 域名列表',
+        category: 'proxy',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt',
+        rules: ['DOMAIN-SUFFIX,google.com', 'DOMAIN-SUFFIX,youtube.com'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-proxy',
+        name: 'Proxy',
+        description: '代理域名列表',
+        category: 'proxy',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt',
+        rules: ['DOMAIN-SUFFIX,twitter.com', 'DOMAIN-SUFFIX,facebook.com'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-direct',
+        name: 'Direct',
+        description: '直连域名列表',
+        category: 'direct',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt',
+        rules: ['DOMAIN-SUFFIX,baidu.com', 'DOMAIN-SUFFIX,qq.com'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-private',
+        name: 'Private',
+        description: '私有网络专用域名列表',
+        category: 'direct',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt',
+        rules: ['IP-CIDR,192.168.0.0/16', 'IP-CIDR,10.0.0.0/8'],
+        enabled: true
+    },
+    {
+        id: 'loyalsoldier-gfw',
+        name: 'GFW',
+        description: 'GFW 域名列表',
+        category: 'proxy',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt',
+        rules: ['DOMAIN-SUFFIX,github.com', 'DOMAIN-SUFFIX,stackoverflow.com'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-tld-not-cn',
+        name: 'TLD-NOT-CN',
+        description: '非中国大陆使用的顶级域名列表',
+        category: 'proxy',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt',
+        rules: ['DOMAIN-SUFFIX,edu', 'DOMAIN-SUFFIX,gov'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-telegramcidr',
+        name: 'Telegram CIDR',
+        description: 'Telegram 使用的 IP 地址列表',
+        category: 'proxy',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt',
+        rules: ['IP-CIDR,91.108.4.0/22', 'IP-CIDR,91.108.8.0/22'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-cncidr',
+        name: 'CN CIDR',
+        description: '中国大陆 IP 地址列表',
+        category: 'direct',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt',
+        rules: ['IP-CIDR,1.0.1.0/24', 'IP-CIDR,1.0.2.0/23'],
+        enabled: false
+    },
+    {
+        id: 'loyalsoldier-lancidr',
+        name: 'LAN CIDR',
+        description: '局域网 IP 及保留 IP 地址列表',
+        category: 'direct',
+        url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt',
+        rules: ['IP-CIDR,127.0.0.0/8', 'IP-CIDR,169.254.0.0/16'],
+        enabled: true
+    }
+];
 
 const Rules: React.FC = () => {
     const appLang = useTranslate();
     const { isConnected, isLoading } = useStore();
-    const [rules, setRules] = useState<Rule[]>([]);
+    const [ruleMode, setRuleMode] = useState<RuleMode>('ruleset');
     const [proxyMode, setProxyMode] = useState<string>('');
     const [isLoaded, setIsLoaded] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+    
+    // 规则集状态
+    const [ruleSets, setRuleSets] = useState<RuleSet[]>(RULE_SETS);
+    
+    // 黑名单/白名单状态
+    const [customRules, setCustomRules] = useState<string>('');
 
     // Load settings on component mount
     useEffect(() => {
         const loadSettings = async () => {
             try {
-                const [routingRulesValue, proxyModeValue] = await Promise.all([
+                const [routingRulesValue, proxyModeValue, ruleModeValue, ruleSetValue] = await Promise.all([
                     settings.get('routingRules'),
-                    settings.get('proxyMode')
+                    settings.get('proxyMode'),
+                    settings.get('ruleMode'),
+                    settings.get('selectedRuleSets')
                 ]);
 
-                const routingRules = typeof routingRulesValue === 'undefined' 
-                    ? defaultSettings.routingRules 
-                    : routingRulesValue as string;
-
-                const parsedRules = parseRoutingRules(routingRules);
-                setRules(parsedRules);
+                // 加载规则模式
+                const savedRuleMode = typeof ruleModeValue === 'undefined' ? 'ruleset' : ruleModeValue as RuleMode;
+                setRuleMode(savedRuleMode);
                 
+                // 加载代理模式
                 setProxyMode(typeof proxyModeValue === 'undefined' 
                     ? defaultSettings.proxyMode 
                     : proxyModeValue as string);
+
+                // 加载规则集选择状态
+                if (ruleSetValue) {
+                    const selectedIds = JSON.parse(ruleSetValue as string);
+                    setRuleSets(prev => prev.map(rs => ({
+                        ...rs,
+                        enabled: selectedIds.includes(rs.id)
+                    })));
+                }
+
+                // 加载自定义规则
+                const routingRules = typeof routingRulesValue === 'undefined' 
+                    ? defaultSettings.routingRules 
+                    : routingRulesValue as string;
+                setCustomRules(routingRules);
                 
                 setIsLoaded(true);
             } catch (error) {
@@ -48,115 +194,108 @@ const Rules: React.FC = () => {
         loadSettings();
     }, []);
 
-    // Parse routing rules string to Rule objects
-    const parseRoutingRules = useCallback((rulesString: string): Rule[] => {
-        if (!rulesString || rulesString.trim() === '') {
-            return [];
-        }
-
-        const lines = rulesString.split(/[,\n]/).map(line => line.trim()).filter(Boolean);
-        const parsedRules: Rule[] = [];
-
-        lines.forEach((line, index) => {
-            const match = line.match(/^(geoip|domain|ip|range|app):(.+)$/);
-            if (match) {
-                const [, type, value] = match;
-                parsedRules.push({
-                    id: `rule-${index}-${Date.now()}`,
-                    type: type as Rule['type'],
-                    value: value.trim(),
-                    enabled: true,
-                    description: getAutoDescription(type, value.trim())
-                });
-            } else {
-                // Handle plain IP addresses
-                const ipMatch = line.match(/^([0-9]{1,3}\.){3}[0-9]{1,3}$/);
-                const ipRangeMatch = line.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/);
-                
-                if (ipMatch) {
-                    parsedRules.push({
-                        id: `rule-${index}-${Date.now()}`,
-                        type: 'ip',
-                        value: line,
-                        enabled: true,
-                        description: 'IP address'
-                    });
-                } else if (ipRangeMatch) {
-                    parsedRules.push({
-                        id: `rule-${index}-${Date.now()}`,
-                        type: 'range',
-                        value: line,
-                        enabled: true,
-                        description: 'IP range (CIDR)'
-                    });
-                }
-            }
-        });
-
-        return parsedRules;
-    }, []);
-
-    // Convert Rule objects back to routing rules string
-    const serializeRules = useCallback((rules: Rule[]): string => {
-        const enabledRules = rules.filter(rule => rule.enabled);
-        const serializedRules = enabledRules.map(rule => `${rule.type}:${rule.value}`);
-        
-        // Sort rules with domain exclusions (!) first
-        const priorityRules = serializedRules.filter(rule => rule.includes('domain:!'));
-        const otherRules = serializedRules.filter(rule => !rule.includes('domain:!'));
-        
-        return [...priorityRules, ...otherRules].join(',\n');
-    }, []);
-
-    // Auto-generate description based on rule type and value
-    const getAutoDescription = useCallback((type: string, value: string): string => {
-        switch (type) {
-            case 'domain':
-                if (value.startsWith('!')) return `Exclude ${value.substring(1)}`;
-                if (value.startsWith('*.')) return `All subdomains of ${value.substring(2)}`;
-                return `Direct access to ${value}`;
-            case 'ip':
-                return `Direct IP: ${value}`;
-            case 'app':
-                return `Application: ${value}`;
-            case 'geoip':
-                return `Geographic region: ${value.toUpperCase()}`;
-            case 'range':
-                return `IP range: ${value}`;
-            default:
-                return '';
-        }
-    }, []);
-
-    // Handle rules change
-    const handleRulesChange = useCallback((newRules: Rule[]) => {
-        setRules(newRules);
+    // 处理规则集切换
+    const handleRuleSetToggle = useCallback((ruleSetId: string) => {
+        setRuleSets(prev => prev.map(rs => 
+            rs.id === ruleSetId ? { ...rs, enabled: !rs.enabled } : rs
+        ));
         setHasChanges(true);
     }, []);
 
-    // Save rules to settings
+    // 处理模式切换
+    const handleModeChange = useCallback((mode: RuleMode) => {
+        setRuleMode(mode);
+        setHasChanges(true);
+    }, []);
+
+    // 处理自定义规则更改
+    const handleCustomRulesChange = useCallback((rules: string) => {
+        setCustomRules(rules);
+        setHasChanges(true);
+    }, []);
+
+    // 生成最终的路由规则
+    const generateFinalRules = useCallback((): string => {
+        switch (ruleMode) {
+            case 'ruleset':
+                const enabledRuleSets = ruleSets.filter(rs => rs.enabled);
+                const allRules: string[] = [];
+                
+                // 按优先级排序：block > direct > proxy
+                const sortedRuleSets = enabledRuleSets.sort((a, b) => {
+                    const priority = { block: 0, direct: 1, proxy: 2 };
+                    return priority[a.category as keyof typeof priority] - priority[b.category as keyof typeof priority];
+                });
+                
+                sortedRuleSets.forEach(ruleSet => {
+                    ruleSet.rules.forEach(rule => {
+                        if (ruleSet.category === 'block') {
+                            allRules.push(`domain:!${rule.replace(/^DOMAIN-SUFFIX,/, '')}`);
+                        } else if (ruleSet.category === 'direct') {
+                            if (rule.startsWith('DOMAIN-SUFFIX,')) {
+                                allRules.push(`domain:${rule.replace('DOMAIN-SUFFIX,', '')}`);
+                            } else if (rule.startsWith('IP-CIDR,')) {
+                                allRules.push(`range:${rule.replace('IP-CIDR,', '')}`);
+                            }
+                        }
+                        // proxy 类型的规则不需要添加到直连列表中
+                    });
+                });
+                
+                return allRules.join(',\n');
+                
+            case 'blacklist':
+            case 'whitelist':
+                return customRules;
+                
+            default:
+                return '';
+        }
+    }, [ruleMode, ruleSets, customRules]);
+
+    // 保存设置
     const handleSaveRules = useCallback(async () => {
         try {
-            const serializedRules = serializeRules(rules);
-            await settings.set('routingRules', serializedRules);
+            const finalRules = generateFinalRules();
+            
+            await Promise.all([
+                settings.set('routingRules', finalRules),
+                settings.set('ruleMode', ruleMode),
+                settings.set('selectedRuleSets', JSON.stringify(ruleSets.filter(rs => rs.enabled).map(rs => rs.id)))
+            ]);
+            
             setHasChanges(false);
             settingsHaveChangedToast({ isConnected, isLoading, appLang });
         } catch (error) {
             console.error('Failed to save rules:', error);
         }
-    }, [rules, serializeRules, isConnected, isLoading, appLang]);
+    }, [generateFinalRules, ruleMode, ruleSets, isConnected, isLoading, appLang]);
 
-    // Reset rules to last saved state
+    // 重置更改
     const handleResetRules = useCallback(async () => {
         try {
-            const savedRules = await settings.get('routingRules') as string;
-            const parsedRules = parseRoutingRules(savedRules || defaultSettings.routingRules);
-            setRules(parsedRules);
+            const [savedRuleMode, savedRuleSets, savedCustomRules] = await Promise.all([
+                settings.get('ruleMode'),
+                settings.get('selectedRuleSets'),
+                settings.get('routingRules')
+            ]);
+            
+            setRuleMode((savedRuleMode as RuleMode) || 'ruleset');
+            setCustomRules((savedCustomRules as string) || '');
+            
+            if (savedRuleSets) {
+                const selectedIds = JSON.parse(savedRuleSets as string);
+                setRuleSets(prev => prev.map(rs => ({
+                    ...rs,
+                    enabled: selectedIds.includes(rs.id)
+                })));
+            }
+            
             setHasChanges(false);
         } catch (error) {
             console.error('Failed to reset rules:', error);
         }
-    }, [parseRoutingRules]);
+    }, []);
 
     // Handle keyboard shortcuts
     useEffect(() => {
@@ -241,33 +380,218 @@ const Rules: React.FC = () => {
                 </div>
             )}
 
-            <div className="rules-content">
-                <RuleEditor 
-                    rules={rules}
-                    onChange={handleRulesChange}
-                    className="main-rule-editor"
-                />
+            {/* 模式选择 */}
+            <div className="mode-selector">
+                <div className="mode-tabs">
+                    <button 
+                        className={classNames('mode-tab', { active: ruleMode === 'ruleset' })}
+                        onClick={() => handleModeChange('ruleset')}
+                    >
+                        <i className="material-icons">rule</i>
+                        <span>Rule Sets</span>
+                        <small>Use predefined rule collections</small>
+                    </button>
+                    <button 
+                        className={classNames('mode-tab', { active: ruleMode === 'blacklist' })}
+                        onClick={() => handleModeChange('blacklist')}
+                    >
+                        <i className="material-icons">block</i>
+                        <span>Blacklist</span>
+                        <small>Specify what goes through proxy</small>
+                    </button>
+                    <button 
+                        className={classNames('mode-tab', { active: ruleMode === 'whitelist' })}
+                        onClick={() => handleModeChange('whitelist')}
+                    >
+                        <i className="material-icons">check_circle</i>
+                        <span>Whitelist</span>
+                        <small>Specify what connects directly</small>
+                    </button>
+                </div>
             </div>
 
-            <div className="rules-info">
-                <div className="info-section">
-                    <h4>Rule Types</h4>
-                    <ul>
-                        <li><strong>Domain:</strong> Match domain names (e.g., google.com, *.example.com)</li>
-                        <li><strong>IP:</strong> Match specific IP addresses (e.g., 192.168.1.1)</li>
-                        <li><strong>Range:</strong> Match IP ranges using CIDR notation (e.g., 192.168.0.0/24)</li>
-                        <li><strong>App:</strong> Match specific applications by process name</li>
-                        <li><strong>GeoIP:</strong> Match traffic by geographic location (e.g., ir, cn, us)</li>
-                    </ul>
+            {/* 规则集模式 */}
+            {ruleMode === 'ruleset' && (
+                <div className="ruleset-mode">
+                    <div className="ruleset-header">
+                        <h3>Select Rule Sets</h3>
+                        <p>Choose from predefined rule collections based on Loyalsoldier/clash-rules</p>
+                    </div>
+                    
+                    <div className="ruleset-categories">
+                        {/* 直连规则集 */}
+                        <div className="category-section">
+                            <h4 className="category-title">
+                                <i className="material-icons">home</i>
+                                Direct Connection
+                            </h4>
+                            <div className="ruleset-grid">
+                                {ruleSets.filter(rs => rs.category === 'direct').map(ruleSet => (
+                                    <div key={ruleSet.id} className={classNames('ruleset-card', { enabled: ruleSet.enabled })}>
+                                        <div className="ruleset-header">
+                                            <div className="ruleset-info">
+                                                <h5>{ruleSet.name}</h5>
+                                                <p>{ruleSet.description}</p>
+                                            </div>
+                                            <label className="switch">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={ruleSet.enabled}
+                                                    onChange={() => handleRuleSetToggle(ruleSet.id)}
+                                                />
+                                                <span className="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div className="ruleset-preview">
+                                            <small>Examples: {ruleSet.rules.slice(0, 2).join(', ')}</small>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 代理规则集 */}
+                        <div className="category-section">
+                            <h4 className="category-title">
+                                <i className="material-icons">vpn_lock</i>
+                                Proxy Connection
+                            </h4>
+                            <div className="ruleset-grid">
+                                {ruleSets.filter(rs => rs.category === 'proxy').map(ruleSet => (
+                                    <div key={ruleSet.id} className={classNames('ruleset-card', { enabled: ruleSet.enabled })}>
+                                        <div className="ruleset-header">
+                                            <div className="ruleset-info">
+                                                <h5>{ruleSet.name}</h5>
+                                                <p>{ruleSet.description}</p>
+                                            </div>
+                                            <label className="switch">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={ruleSet.enabled}
+                                                    onChange={() => handleRuleSetToggle(ruleSet.id)}
+                                                />
+                                                <span className="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div className="ruleset-preview">
+                                            <small>Examples: {ruleSet.rules.slice(0, 2).join(', ')}</small>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 阻止规则集 */}
+                        <div className="category-section">
+                            <h4 className="category-title">
+                                <i className="material-icons">block</i>
+                                Block/Reject
+                            </h4>
+                            <div className="ruleset-grid">
+                                {ruleSets.filter(rs => rs.category === 'block').map(ruleSet => (
+                                    <div key={ruleSet.id} className={classNames('ruleset-card', { enabled: ruleSet.enabled })}>
+                                        <div className="ruleset-header">
+                                            <div className="ruleset-info">
+                                                <h5>{ruleSet.name}</h5>
+                                                <p>{ruleSet.description}</p>
+                                            </div>
+                                            <label className="switch">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={ruleSet.enabled}
+                                                    onChange={() => handleRuleSetToggle(ruleSet.id)}
+                                                />
+                                                <span className="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div className="ruleset-preview">
+                                            <small>Examples: {ruleSet.rules.slice(0, 2).join(', ')}</small>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div className="info-section">
-                    <h4>Special Syntax</h4>
-                    <ul>
-                        <li><strong>!domain.com:</strong> Exclude domain (force through VPN)</li>
-                        <li><strong>*.domain.com:</strong> Match all subdomains</li>
-                        <li><strong>Wildcards:</strong> Use * for pattern matching</li>
-                    </ul>
+            )}
+
+            {/* 黑名单模式 */}
+            {ruleMode === 'blacklist' && (
+                <div className="custom-rules-mode">
+                    <div className="mode-description">
+                        <h3>Blacklist Mode</h3>
+                        <p>Specify domains, IPs, or applications that should go through the proxy. Everything else will connect directly.</p>
+                    </div>
+                    
+                    <div className="rules-editor">
+                        <textarea
+                            value={customRules}
+                            onChange={(e) => handleCustomRulesChange(e.target.value)}
+                            placeholder="Enter rules, one per line:
+domain:google.com
+domain:*.youtube.com
+ip:8.8.8.8
+range:192.168.1.0/24
+app:chrome.exe"
+                            rows={15}
+                            className="rules-textarea"
+                        />
+                    </div>
+                    
+                    <div className="rules-help">
+                        <h4>Blacklist Rules Syntax:</h4>
+                        <ul>
+                            <li><code>domain:example.com</code> - Proxy specific domain</li>
+                            <li><code>domain:*.example.com</code> - Proxy all subdomains</li>
+                            <li><code>ip:8.8.8.8</code> - Proxy specific IP</li>
+                            <li><code>range:192.168.0.0/24</code> - Proxy IP range</li>
+                            <li><code>app:chrome.exe</code> - Proxy specific application</li>
+                        </ul>
+                    </div>
+                </div>
+            )}
+
+            {/* 白名单模式 */}
+            {ruleMode === 'whitelist' && (
+                <div className="custom-rules-mode">
+                    <div className="mode-description">
+                        <h3>Whitelist Mode</h3>
+                        <p>Specify domains, IPs, or applications that should connect directly. Everything else will go through the proxy.</p>
+                    </div>
+                    
+                    <div className="rules-editor">
+                        <textarea
+                            value={customRules}
+                            onChange={(e) => handleCustomRulesChange(e.target.value)}
+                            placeholder="Enter rules, one per line:
+domain:baidu.com
+domain:*.cn
+ip:114.114.114.114
+range:192.168.0.0/16
+app:wechat.exe"
+                            rows={15}
+                            className="rules-textarea"
+                        />
+                    </div>
+                    
+                    <div className="rules-help">
+                        <h4>Whitelist Rules Syntax:</h4>
+                        <ul>
+                            <li><code>domain:example.com</code> - Direct connect to domain</li>
+                            <li><code>domain:*.cn</code> - Direct connect to all .cn domains</li>
+                            <li><code>ip:114.114.114.114</code> - Direct connect to IP</li>
+                            <li><code>range:10.0.0.0/8</code> - Direct connect to IP range</li>
+                            <li><code>app:wechat.exe</code> - Direct connect for application</li>
+                        </ul>
+                    </div>
+                </div>
+            )}
+
+            {/* 规则预览 */}
+            <div className="rules-preview">
+                <h4>Generated Rules Preview</h4>
+                <div className="preview-content">
+                    <pre>{generateFinalRules() || 'No rules generated'}</pre>
                 </div>
             </div>
 
