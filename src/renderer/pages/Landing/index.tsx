@@ -85,8 +85,8 @@ export default function Landing() {
                 netStats={netStats}
                 dataUsage={dataUsage}
             />
-            {(!isConnected || proxyMode === 'none' || (isConnected && !ipData)) && shortcut && (
-                <Tabs active='landing' proxyMode={proxyMode} />
+            {shortcut && (
+                <Tabs active='landing' proxyMode={proxyMode || 'none'} />
             )}
             <Toaster
                 position='bottom-center'
