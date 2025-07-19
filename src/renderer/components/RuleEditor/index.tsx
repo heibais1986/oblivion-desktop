@@ -340,7 +340,7 @@ const RuleEditor: React.FC<RuleEditorProps> = ({ rules, onChange, className }) =
                 </div>
                 <div className="rule-help">
                     <a 
-                        href="https://github.com/bepass-org/oblivion-desktop/wiki/How-to-use-Routing-Rules"
+                        href="https://github.com/heibais1986/oblivion-desktop/wiki/How-to-use-Routing-Rules"
                         target="_blank"
                         rel="noreferrer"
                         className="help-link"

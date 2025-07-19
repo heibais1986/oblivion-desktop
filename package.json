@@ -3,13 +3,13 @@
     "description": "unofficial desktop version of oblivion",
     "shortName": "oblivion",
     "author": "ircfspace+kiomarzsss <ircfspace@gmail.com> (https://ircf.space/)",
-    "homepage": "https://github.com/bepass-org/oblivion-desktop#readme",
+    "homepage": "https://github.com/heibais1986/oblivion-desktop#readme",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/bepass-org/oblivion-desktop.git"
+        "url": "git+https://github.com/heibais1986/oblivion-desktop.git"
     },
     "bugs": {
-        "url": "https://github.com/bepass-org/oblivion-desktop/issues",
+        "url": "https://github.com/heibais1986/oblivion-desktop/issues",
         "email": "ircfspace@gmail.com"
     },
     "version": "2.101.1",
@@ -298,7 +298,7 @@
         ],
         "publish": {
             "provider": "github",
-            "owner": "bepass-org",
+            "owner": "heibais1986",
             "repo": "oblivion-desktop",
             "publishAutoUpdate": true,
             "private": false,
