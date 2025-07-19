@@ -8,6 +8,7 @@ import Scanner from '../pages/Scanner';
 import Network from '../pages/Network';
 import Speed from '../pages/SpeedTest';
 import SingBox from '../pages/SingBox';
+import Rules from '../pages/Rules';
 import { GlobalProvider } from '../context/GlobalContext';
 
 const AppRoutes = () => {
@@ -23,6 +24,7 @@ const AppRoutes = () => {
                 <Route path='/network' element={<Network />} />
                 <Route path='/speed' element={<Speed />} />
                 <Route path='/singBox' element={<SingBox />} />
+                <Route path='/rules' element={<Rules />} />
             </Routes>
         </GlobalProvider>
     );

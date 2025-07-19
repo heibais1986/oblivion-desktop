@@ -153,6 +153,7 @@ const vietnamese: Language = {
         home: 'Kết nối',
         warp: 'Warp',
         network: 'Mạng',
+        rules: 'Quy tắc',
         scanner: 'Máy quét',
         app: 'Ứng dụng',
         singbox: 'Đường hầm'

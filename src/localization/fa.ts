@@ -151,6 +151,7 @@ const persian: Language = {
         home: 'اتصال',
         warp: 'وارپ',
         network: 'شبکه',
+        rules: 'قوانین',
         scanner: 'اسکنر',
         app: 'برنامه',
         singbox: 'تانل'

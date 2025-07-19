@@ -149,6 +149,7 @@ const amharic: Language = {
         home: 'เชื่อมต่อ',
         warp: 'วาร์ป',
         network: 'เครือข่าย',
+        rules: 'กฎ',
         scanner: 'เครื่องสแกน',
         app: 'แอป',
         singbox: 'ቱኔል'

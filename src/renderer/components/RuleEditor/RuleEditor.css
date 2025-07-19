@@ -1,0 +1,442 @@
+.rule-editor {
+    background: var(--background-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rule-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.rule-editor-header h3 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.rule-editor-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.rule-editor-actions .btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.rule-editor-actions .btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.rule-editor-actions .btn-primary:hover {
+    background: #0056b3;
+}
+
+.rule-editor-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.rule-editor-actions .btn-secondary:hover {
+    background: #545b62;
+}
+
+.rule-form {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.rule-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--header-background);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.rule-form-header h4 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--text-color-secondary);
+    transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+    background: var(--hover-background);
+    color: var(--text-color);
+}
+
+.rule-form-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-background);
+    color: var(--text-color);
+    font-size: 0.9em;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.form-actions .btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.form-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.rules-list {
+    min-height: 200px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-color-secondary);
+}
+
+.empty-state i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0 0 20px 0;
+    font-size: 1.1em;
+}
+
+.rule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.rule-item:hover {
+    border-color: var(--border-color-hover);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.rule-item.rule-disabled {
+    opacity: 0.6;
+    background: var(--disabled-background);
+}
+
+.rule-item.rule-editing {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.rule-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.rule-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+}
+
+.rule-icon {
+    font-size: 1.2em;
+}
+
+.rule-type-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rule-value {
+    flex: 1;
+}
+
+.rule-value code {
+    background: var(--code-background);
+    color: var(--code-color);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.rule-description {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-color-secondary);
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.rule-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--text-color-secondary);
+    transition: all 0.2s ease;
+}
+
+.btn-toggle:hover {
+    background: var(--hover-background);
+}
+
+.btn-toggle.active {
+    color: #28a745;
+}
+
+.btn-toggle.active:hover {
+    color: #1e7e34;
+}
+
+.rule-actions .btn {
+    padding: 6px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.2s ease;
+}
+
+.rule-actions .btn-sm {
+    padding: 4px 6px;
+}
+
+.rule-actions .btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.rule-actions .btn-danger:hover {
+    background: #c82333;
+}
+
+.rule-edit-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.rule-edit-fields {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+
+.rule-edit-fields select,
+.rule-edit-fields input {
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-background);
+    color: var(--text-color);
+    font-size: 0.9em;
+}
+
+.rule-edit-fields select {
+    min-width: 100px;
+}
+
+.rule-edit-fields input:first-of-type {
+    flex: 2;
+}
+
+.rule-edit-fields input:last-of-type {
+    flex: 1;
+}
+
+.rule-edit-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.rule-editor-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.rule-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9em;
+    color: var(--text-color-secondary);
+}
+
+.help-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+
+.help-link:hover {
+    color: var(--link-hover-color);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .rule-editor {
+    --background-color: #1a1a1a;
+    --card-background: #2d2d2d;
+    --header-background: #333;
+    --border-color: #404040;
+    --border-color-hover: #555;
+    --text-color: #ffffff;
+    --text-color-secondary: #b0b0b0;
+    --input-background: #333;
+    --code-background: #404040;
+    --code-color: #f8f8f2;
+    --hover-background: #404040;
+    --disabled-background: #2a2a2a;
+    --link-color: #66b3ff;
+    --link-hover-color: #4da6ff;
+}
+
+/* Light theme support */
+[data-theme="light"] .rule-editor {
+    --background-color: #ffffff;
+    --card-background: #f8f9fa;
+    --header-background: #f1f3f4;
+    --border-color: #dee2e6;
+    --border-color-hover: #adb5bd;
+    --text-color: #212529;
+    --text-color-secondary: #6c757d;
+    --input-background: #ffffff;
+    --code-background: #f8f9fa;
+    --code-color: #e83e8c;
+    --hover-background: #f8f9fa;
+    --disabled-background: #f8f9fa;
+    --link-color: #007bff;
+    --link-hover-color: #0056b3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .rule-editor-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .rule-editor-actions {
+        justify-content: center;
+    }
+    
+    .rule-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .rule-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .rule-actions {
+        justify-content: center;
+    }
+    
+    .rule-edit-fields {
+        flex-direction: column;
+    }
+    
+    .rule-editor-footer {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}

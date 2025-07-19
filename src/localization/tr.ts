@@ -153,6 +153,7 @@ const turkish: Language = {
         home: 'Bağlan',
         warp: 'Warp',
         network: 'Ağ',
+        rules: 'Kurallar',
         scanner: 'Tarayıcı',
         app: 'Uygulama',
         singbox: 'Tünel'

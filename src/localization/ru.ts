@@ -153,6 +153,7 @@ const russian: Language = {
         home: 'Связь',
         warp: 'Warp',
         network: 'Сеть',
+        rules: 'Правила',
         scanner: 'Сканер',
         app: 'заявка',
         singbox: 'Туннель'

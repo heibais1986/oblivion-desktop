@@ -150,6 +150,7 @@ export interface Tabs {
     home: string;
     warp: string;
     network: string;
+    rules: string;
     scanner: string;
     app: string;
     singbox: string;

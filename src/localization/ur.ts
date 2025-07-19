@@ -153,6 +153,7 @@ const urdu: Language = {
         home: 'کنیکٹ',
         warp: 'وارپ',
         network: 'نیٹ ورک',
+        rules: 'قوانین',
         scanner: 'سکینر',
         app: 'ایپ',
         singbox: 'ٹنل'

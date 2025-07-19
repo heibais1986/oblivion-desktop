@@ -149,6 +149,7 @@ const arabic: Language = {
         home: 'اتصال',
         warp: 'وارب',
         network: 'الشبكة',
+        rules: 'القواعد',
         scanner: 'الماسح الضوئي',
         app: 'التطبيق',
         singbox: 'نفق'

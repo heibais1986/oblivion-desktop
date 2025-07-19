@@ -154,6 +154,7 @@ const spanish: Language = {
         home: 'Conectar',
         warp: 'Warp',
         network: 'Red',
+        rules: 'Reglas',
         scanner: 'Escáner',
         app: 'Aplicación',
         singbox: 'Túnel'

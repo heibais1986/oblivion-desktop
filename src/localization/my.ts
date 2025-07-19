@@ -152,6 +152,7 @@ const myanmar: Language = {
         home: 'ချိတ်ဆက်ပါ',
         warp: 'Warp',
         network: 'အင်တာနက်',
+        rules: 'စည်းမျဉ်းများ',
         scanner: 'စကင်နာ',
         app: 'အက်ပ်',
         singbox: 'တန်နယ်'

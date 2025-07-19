@@ -152,6 +152,7 @@ const brazilianPortuguese: Language = {
         home: 'Conectar',
         warp: 'Warp',
         network: 'Rede',
+        rules: 'Regras',
         scanner: 'Scanner',
         app: 'Aplicativo',
         singbox: 'Túnel'

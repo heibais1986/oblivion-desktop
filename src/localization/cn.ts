@@ -149,6 +149,7 @@ const chinese: Language = {
         home: '连接',
         warp: 'Warp',
         network: '网络',
+        rules: '规则',
         scanner: '扫描仪',
         app: '应用',
         singbox: '隧道'

@@ -36,6 +36,12 @@ export default function Tabs({ active, proxyMode }: TabsProps) {
                         <span>{appLang?.tabs?.network}</span>
                     </Link>
                 </li>
+                <li className={active === 'rules' ? 'active' : ''}>
+                    <Link to={'/rules'} role='tab'>
+                        <i className={'material-icons'}>&#xe8d5;</i>
+                        <span>{appLang?.tabs?.rules}</span>
+                    </Link>
+                </li>
                 {proxyMode === 'tun' && (
                     <>
                         <li className={active === 'singbox' ? 'active' : ''}>

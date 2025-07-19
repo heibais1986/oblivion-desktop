@@ -153,6 +153,7 @@ const indonesia: Language = {
         home: 'Hubungkan',
         warp: 'Warp',
         network: 'Jaringan',
+        rules: 'Aturan',
         scanner: 'Pemindai',
         app: 'Aplikasi',
         singbox: 'Terowongan'

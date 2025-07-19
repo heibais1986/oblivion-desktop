@@ -152,6 +152,7 @@ const english: Language = {
         home: 'Connect',
         warp: 'Warp',
         network: 'Network',
+        rules: 'Rules',
         scanner: 'Scanner',
         app: 'App',
         singbox: 'Tunnel'
