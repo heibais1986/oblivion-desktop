@@ -201,7 +201,11 @@ const Rules: React.FC = () => {
         
         await RulesConfigManager.saveRuleSetConfig(ruleSetConfig);
         await saveCurrentRulesToSettings(ruleMode, newRuleSets, customRules);
-        settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        
+        // 如果当前已连接，提示用户重新连接以应用新规则
+        if (isConnected) {
+            settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        }
     }, [ruleSets, ruleMode, customRules, isConnected, isLoading, appLang]);
 
     // 处理模式切换 - 立即保存并加载对应配置
@@ -229,7 +233,11 @@ const Rules: React.FC = () => {
         }
         
         await saveCurrentRulesToSettings(mode, ruleSets, mode === 'blacklist' ? await RulesConfigManager.getBlacklistRules() : mode === 'whitelist' ? await RulesConfigManager.getWhitelistRules() : '');
-        settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        
+        // 如果当前已连接，提示用户重新连接以应用新规则
+        if (isConnected) {
+            settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        }
     }, [ruleMode, customRules, ruleSets, isConnected, isLoading, appLang]);
 
     // 处理自定义规则更改 - 使用防抖延迟保存
@@ -245,7 +253,11 @@ const Rules: React.FC = () => {
             await RulesConfigManager.saveWhitelistRules(customRules);
         }
         await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules);
-        settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        
+        // 如果当前已连接，提示用户重新连接以应用新规则
+        if (isConnected) {
+            settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        }
     }, [ruleMode, customRules, ruleSets, isConnected, isLoading, appLang]);
 
     // 保存当前规则到系统设置
@@ -274,19 +286,25 @@ const Rules: React.FC = () => {
                 sortedRuleSets.forEach(ruleSet => {
                     ruleSet.rules.forEach(rule => {
                         if (ruleSet.category === 'block') {
+                            // 阻止规则：使用!前缀表示例外（这些域名走代理）
                             allRules.push(`domain:!${rule.replace(/^DOMAIN-SUFFIX,/, '')}`);
                         } else if (ruleSet.category === 'direct') {
+                            // 直连规则
                             if (rule.startsWith('DOMAIN-SUFFIX,')) {
-                                allRules.push(`domain:${rule.replace('DOMAIN-SUFFIX,', '')}`);
+                                const domain = rule.replace('DOMAIN-SUFFIX,', '');
+                                // 如果是通配符域名，使用domain:*.格式
+                                allRules.push(`domain:*.${domain}`);
                             } else if (rule.startsWith('IP-CIDR,')) {
-                                allRules.push(`range:${rule.replace('IP-CIDR,', '')}`);
+                                // IP段规则，使用ip:前缀
+                                allRules.push(`ip:${rule.replace('IP-CIDR,', '')}`);
                             }
                         }
-                        // proxy 类型的规则不需要添加到直连列表中
+                        // proxy 类型的规则不需要添加到直连列表中，因为默认就是走代理
                     });
                 });
                 
-                return allRules.join(',\n');
+                // 使用换行符连接规则，这是解析器期望的格式
+                return allRules.join('\n');
                 
             case 'blacklist':
             case 'whitelist':
@@ -494,7 +512,7 @@ const Rules: React.FC = () => {
 domain:google.com
 domain:*.youtube.com
 ip:8.8.8.8
-range:192.168.1.0/24
+ip:192.168.1.0/24
 app:chrome.exe"
                             rows={15}
                             className="rules-textarea"
@@ -507,7 +525,7 @@ app:chrome.exe"
                             <li><code>domain:example.com</code> - Proxy specific domain</li>
                             <li><code>domain:*.example.com</code> - Proxy all subdomains</li>
                             <li><code>ip:8.8.8.8</code> - Proxy specific IP</li>
-                            <li><code>range:192.168.0.0/24</code> - Proxy IP range</li>
+                            <li><code>ip:192.168.0.0/24</code> - Proxy IP range</li>
                             <li><code>app:chrome.exe</code> - Proxy specific application</li>
                         </ul>
                     </div>
@@ -531,7 +549,7 @@ app:chrome.exe"
 domain:baidu.com
 domain:*.cn
 ip:114.114.114.114
-range:192.168.0.0/16
+ip:192.168.0.0/16
 app:wechat.exe"
                             rows={15}
                             className="rules-textarea"
@@ -544,7 +562,7 @@ app:wechat.exe"
                             <li><code>domain:example.com</code> - Direct connect to domain</li>
                             <li><code>domain:*.cn</code> - Direct connect to all .cn domains</li>
                             <li><code>ip:114.114.114.114</code> - Direct connect to IP</li>
-                            <li><code>range:10.0.0.0/8</code> - Direct connect to IP range</li>
+                            <li><code>ip:10.0.0.0/8</code> - Direct connect to IP range</li>
                             <li><code>app:wechat.exe</code> - Direct connect for application</li>
                         </ul>
                     </div>
