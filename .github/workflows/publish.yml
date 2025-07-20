@@ -30,6 +30,7 @@ jobs:
 
             - name: Set Release Message
               uses: softprops/action-gh-release@v2
+              if: matrix.os == 'ubuntu-22.04'  # 只在一个job中创建release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
