@@ -60,7 +60,7 @@ import packageJsonData from '../../package.json';
 
 const APP_TITLE = `Oblivion Desktop${isDev() ? ' ᴅᴇᴠ' : ''}`;
 const WINDOW_DIMENSIONS = {
-    width: 500,
+    width: 400,
     height: 650
 };
 
