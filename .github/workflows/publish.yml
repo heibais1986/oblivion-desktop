@@ -18,6 +18,9 @@ jobs:
         steps:
             - name: Checkout git repo
               uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0  # 获取完整的git历史
+                  fetch-tags: true  # 确保获取所有标签
 
             - name: Prepare Release Message
               run: |
@@ -28,18 +31,7 @@ jobs:
                   fi
               shell: bash
 
-            - name: Set Release Message
-              uses: softprops/action-gh-release@v2
-              if: matrix.os == 'ubuntu-22.04'  # 只在一个job中创建release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: ${{ github.ref_name }}
-                  name: ${{ github.ref_name }}
-                  body_path: './release.md'
-                  draft: true
-                  prerelease: false
-                  make_latest: true
+
 
             - name: Install Node and NPM
               uses: actions/setup-node@v4
@@ -56,35 +48,47 @@ jobs:
                   npm run build
               shell: bash
 
+            - name: Create Release (first job only)
+              if: matrix.os == 'ubuntu-22.04'
+              uses: softprops/action-gh-release@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  name: ${{ github.ref_name }}
+                  body_path: './release.md'
+                  draft: false
+                  prerelease: false
+
             - name: Publish releases mac x64
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               if: matrix.os == 'macos-13'
-              run: npm exec electron-builder -- --mac dmg zip --x64 --publish onTagOrDraft
+              run: npm exec electron-builder -- --mac dmg zip --x64 --publish always
 
             - name: Publish releases mac arm64
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               if: matrix.os == 'macos-14'
-              run: npm exec electron-builder -- --mac dmg zip --arm64 --publish onTagOrDraft
+              run: npm exec electron-builder -- --mac dmg zip --arm64 --publish always
 
             - name: Publish releases windows
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               if: matrix.os == 'windows-latest'
-              run: npm exec electron-builder -- --publish onTagOrDraft
+              run: npm exec electron-builder -- --publish always
 
             - name: Publish releases GNU Linux x64
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               if: matrix.os == 'ubuntu-22.04'
-              run: npm exec electron-builder -- --linux deb rpm tar.xz AppImage --x64 --publish onTagOrDraft
+              run: npm exec electron-builder -- --linux deb rpm tar.xz AppImage --x64 --publish always
 
             - name: Publish releases GNU Linux arm64
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               if: matrix.os == 'ubuntu-24.04'
-              run: npm exec electron-builder -- --linux deb rpm tar.xz AppImage --arm64 --publish onTagOrDraft
+              run: npm exec electron-builder -- --linux deb rpm tar.xz AppImage --arm64 --publish always
 
             - name: Delete unwanted files
               uses: mknejp/delete-release-assets@v1
