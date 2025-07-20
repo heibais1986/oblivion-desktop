@@ -179,8 +179,13 @@ const Rules: React.FC = () => {
                     setCustomRules(whitelistRules);
                 } else if (currentMode === 'ruleset') {
                     // 加载规则集模式的自定义规则
-                    const rulesetCustom = await RulesConfigManager.getRulesetCustomRules();
-                    setRulesetCustomRules(rulesetCustom);
+                    try {
+                        const rulesetCustom = await RulesConfigManager.getRulesetCustomRules();
+                        setRulesetCustomRules(rulesetCustom || '');
+                    } catch (error) {
+                        console.error('Failed to load ruleset custom rules:', error);
+                        setRulesetCustomRules('');
+                    }
                 }
                 
                 setIsLoaded(true);
