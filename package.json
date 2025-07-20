@@ -3,16 +3,16 @@
     "description": "unofficial desktop version of oblivion",
     "shortName": "oblivion",
     "author": "ircfspace+kiomarzsss <ircfspace@gmail.com> (https://ircf.space/)",
-    "homepage": "https://github.com/heibais1986/oblivion-desktop#readme",
+    "homepage": "https://github.com/ircfspace/oblivion-desktop#readme",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/heibais1986/oblivion-desktop.git"
     },
     "bugs": {
-        "url": "https://github.com/heibais1986/oblivion-desktop/issues",
+        "url": "https://github.com/ircfspace/oblivion-desktop/issues",
         "email": "ircfspace@gmail.com"
     },
-    "version": "2.101.2",
+    "version": "2.101.6",
     "license": "Restrictive",
     "main": "./.erb/dll/main.bundle.dev.js",
     "scripts": {
@@ -302,7 +302,7 @@
             "repo": "oblivion-desktop",
             "publishAutoUpdate": true,
             "private": false,
-            "releaseType": "draft"
+            "releaseType": "release"
         }
     },
     "engines": {
