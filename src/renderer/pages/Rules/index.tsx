@@ -609,45 +609,35 @@ app:wechat.exe"
                 {ruleMode === 'ruleset' ? (
                     <div className="editable-preview">
                         <div className="preview-description">
-                            <p>Generated rules from rule sets (read-only) + your custom rules (editable below):</p>
+                            <p>Generated rules from rule sets + your custom rules:</p>
                         </div>
-                        <div className="rules-sections">
-                            {/* 生成的规则（只读） */}
-                            <div className="generated-rules-section">
-                                <h5>Generated from Rule Sets:</h5>
-                                <pre className="generated-rules">
-                                    {generateFinalRulesForMode(ruleMode, ruleSets, customRules) || 'No rules generated from rule sets'}
-                                </pre>
-                            </div>
-                            
-                            {/* 自定义规则（可编辑） */}
-                            <div className="custom-rules-section">
-                                <h5>Your Custom Rules:</h5>
-                                <textarea
-                                    value={rulesetCustomRules}
-                                    onChange={(e) => handleRulesetCustomRulesChange(e.target.value)}
-                                    onBlur={handleRulesetCustomRulesBlur}
-                                    placeholder="Add your custom rules here, one per line:
+                        
+                        {/* 自定义规则编辑区 */}
+                        <div className="custom-rules-section">
+                            <h5>Add Your Custom Rules:</h5>
+                            <textarea
+                                value={rulesetCustomRules}
+                                onChange={(e) => handleRulesetCustomRulesChange(e.target.value)}
+                                onBlur={handleRulesetCustomRulesBlur}
+                                placeholder={`Add custom rules, one per line:
 app:WeChat.exe
-app:WeChatAppEx.exe
 app:firefox.exe
 domain:example.com
-ip:192.168.1.0/24"
-                                    rows={8}
-                                    className="custom-rules-textarea"
-                                />
-                                <div className="custom-rules-help">
-                                    <small>
-                                        <strong>Syntax:</strong> 
-                                        <code>app:AppName.exe</code>, 
-                                        <code>domain:example.com</code>, 
-                                        <code>ip:192.168.1.0/24</code>
-                                    </small>
-                                </div>
+ip:192.168.1.0/24`}
+                                rows={6}
+                                className="custom-rules-textarea"
+                            />
+                            <div className="custom-rules-help">
+                                <small>
+                                    <strong>Syntax:</strong> 
+                                    <code>app:AppName.exe</code>, 
+                                    <code>domain:example.com</code>, 
+                                    <code>ip:192.168.1.0/24</code>
+                                </small>
                             </div>
                         </div>
                         
-                        {/* 最终合并的规则预览 */}
+                        {/* 最终规则预览 */}
                         <div className="final-rules-section">
                             <h5>Final Combined Rules:</h5>
                             <pre className="final-rules">
