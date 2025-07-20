@@ -177,6 +177,10 @@ const Rules: React.FC = () => {
                 } else if (currentMode === 'whitelist') {
                     const whitelistRules = await RulesConfigManager.getWhitelistRules();
                     setCustomRules(whitelistRules);
+                } else if (currentMode === 'ruleset') {
+                    // 加载规则集模式的自定义规则
+                    const rulesetCustom = await RulesConfigManager.getRulesetCustomRules();
+                    setRulesetCustomRules(rulesetCustom);
                 }
                 
                 setIsLoaded(true);
@@ -203,13 +207,13 @@ const Rules: React.FC = () => {
         }, {} as { [key: string]: boolean });
         
         await RulesConfigManager.saveRuleSetConfig(ruleSetConfig);
-        await saveCurrentRulesToSettings(ruleMode, newRuleSets, customRules);
+        await saveCurrentRulesToSettings(ruleMode, newRuleSets, customRules, rulesetCustomRules);
         
         // 如果当前已连接，提示用户重新连接以应用新规则
         if (isConnected) {
             settingsHaveChangedToast({ isConnected, isLoading, appLang });
         }
-    }, [ruleSets, ruleMode, customRules, isConnected, isLoading, appLang]);
+    }, [ruleSets, ruleMode, customRules, rulesetCustomRules, isConnected, isLoading, appLang]);
 
     // 处理模式切换 - 立即保存并加载对应配置
     const handleModeChange = useCallback(async (mode: RuleMode) => {
@@ -235,13 +239,13 @@ const Rules: React.FC = () => {
             setCustomRules('');
         }
         
-        await saveCurrentRulesToSettings(mode, ruleSets, mode === 'blacklist' ? await RulesConfigManager.getBlacklistRules() : mode === 'whitelist' ? await RulesConfigManager.getWhitelistRules() : '');
+        await saveCurrentRulesToSettings(mode, ruleSets, mode === 'blacklist' ? await RulesConfigManager.getBlacklistRules() : mode === 'whitelist' ? await RulesConfigManager.getWhitelistRules() : '', mode === 'ruleset' ? rulesetCustomRules : undefined);
         
         // 如果当前已连接，提示用户重新连接以应用新规则
         if (isConnected) {
             settingsHaveChangedToast({ isConnected, isLoading, appLang });
         }
-    }, [ruleMode, customRules, ruleSets, isConnected, isLoading, appLang]);
+    }, [ruleMode, customRules, ruleSets, rulesetCustomRules, isConnected, isLoading, appLang]);
 
     // 处理自定义规则更改 - 使用防抖延迟保存
     const handleCustomRulesChange = useCallback((rules: string) => {
@@ -255,26 +259,42 @@ const Rules: React.FC = () => {
         } else if (ruleMode === 'whitelist') {
             await RulesConfigManager.saveWhitelistRules(customRules);
         }
-        await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules);
+        await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules, rulesetCustomRules);
         
         // 如果当前已连接，提示用户重新连接以应用新规则
         if (isConnected) {
             settingsHaveChangedToast({ isConnected, isLoading, appLang });
         }
-    }, [ruleMode, customRules, ruleSets, isConnected, isLoading, appLang]);
+    }, [ruleMode, customRules, ruleSets, rulesetCustomRules, isConnected, isLoading, appLang]);
+
+    // 处理规则集自定义规则更改
+    const handleRulesetCustomRulesChange = useCallback((rules: string) => {
+        setRulesetCustomRules(rules);
+    }, []);
+
+    // 处理规则集自定义规则失焦 - 立即保存
+    const handleRulesetCustomRulesBlur = useCallback(async () => {
+        await RulesConfigManager.saveRulesetCustomRules(rulesetCustomRules);
+        await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules, rulesetCustomRules);
+        
+        // 如果当前已连接，提示用户重新连接以应用新规则
+        if (isConnected) {
+            settingsHaveChangedToast({ isConnected, isLoading, appLang });
+        }
+    }, [ruleMode, ruleSets, customRules, rulesetCustomRules, isConnected, isLoading, appLang]);
 
     // 保存当前规则到系统设置
-    const saveCurrentRulesToSettings = useCallback(async (mode: RuleMode, currentRuleSets: RuleSet[], currentCustomRules: string) => {
+    const saveCurrentRulesToSettings = useCallback(async (mode: RuleMode, currentRuleSets: RuleSet[], currentCustomRules: string, rulesetCustom?: string) => {
         try {
-            const finalRules = generateFinalRulesForMode(mode, currentRuleSets, currentCustomRules);
+            const finalRules = generateFinalRulesForMode(mode, currentRuleSets, currentCustomRules, rulesetCustom);
             await settings.set('routingRules', finalRules);
         } catch (error) {
             console.error('Failed to save rules to settings:', error);
         }
-    }, []);
+    }, [generateFinalRulesForMode]);
 
     // 为指定模式生成最终规则
-    const generateFinalRulesForMode = useCallback((mode: RuleMode, currentRuleSets: RuleSet[], currentCustomRules: string): string => {
+    const generateFinalRulesForMode = useCallback((mode: RuleMode, currentRuleSets: RuleSet[], currentCustomRules: string, rulesetCustom?: string): string => {
         switch (mode) {
             case 'ruleset':
                 const enabledRuleSets = currentRuleSets.filter(rs => rs.enabled);
@@ -306,6 +326,12 @@ const Rules: React.FC = () => {
                     });
                 });
                 
+                // 添加用户自定义规则（如果有的话）
+                if (rulesetCustom && rulesetCustom.trim()) {
+                    const customRuleLines = rulesetCustom.trim().split('\n').filter(line => line.trim());
+                    allRules.push(...customRuleLines);
+                }
+                
                 // 使用换行符连接规则，这是解析器期望的格式
                 return allRules.join('\n');
                 
@@ -320,8 +346,8 @@ const Rules: React.FC = () => {
 
     // 生成最终的路由规则（用于预览）
     const generateFinalRules = useCallback((): string => {
-        return generateFinalRulesForMode(ruleMode, ruleSets, customRules);
-    }, [ruleMode, ruleSets, customRules, generateFinalRulesForMode]);
+        return generateFinalRulesForMode(ruleMode, ruleSets, customRules, rulesetCustomRules);
+    }, [ruleMode, ruleSets, customRules, rulesetCustomRules, generateFinalRulesForMode]);
 
     if (!isLoaded) {
         return (
@@ -575,9 +601,60 @@ app:wechat.exe"
             {/* 规则预览 */}
             <div className="rules-preview">
                 <h4>{appLang?.rules?.generated_rules_preview}</h4>
-                <div className="preview-content">
-                    <pre>{generateFinalRules() || appLang?.rules?.no_rules_generated}</pre>
-                </div>
+                {ruleMode === 'ruleset' ? (
+                    <div className="editable-preview">
+                        <div className="preview-description">
+                            <p>Generated rules from rule sets (read-only) + your custom rules (editable below):</p>
+                        </div>
+                        <div className="rules-sections">
+                            {/* 生成的规则（只读） */}
+                            <div className="generated-rules-section">
+                                <h5>Generated from Rule Sets:</h5>
+                                <pre className="generated-rules">
+                                    {generateFinalRulesForMode(ruleMode, ruleSets, customRules) || 'No rules generated from rule sets'}
+                                </pre>
+                            </div>
+                            
+                            {/* 自定义规则（可编辑） */}
+                            <div className="custom-rules-section">
+                                <h5>Your Custom Rules:</h5>
+                                <textarea
+                                    value={rulesetCustomRules}
+                                    onChange={(e) => handleRulesetCustomRulesChange(e.target.value)}
+                                    onBlur={handleRulesetCustomRulesBlur}
+                                    placeholder="Add your custom rules here, one per line:
+app:WeChat.exe
+app:WeChatAppEx.exe
+app:firefox.exe
+domain:example.com
+ip:192.168.1.0/24"
+                                    rows={8}
+                                    className="custom-rules-textarea"
+                                />
+                                <div className="custom-rules-help">
+                                    <small>
+                                        <strong>Syntax:</strong> 
+                                        <code>app:AppName.exe</code>, 
+                                        <code>domain:example.com</code>, 
+                                        <code>ip:192.168.1.0/24</code>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* 最终合并的规则预览 */}
+                        <div className="final-rules-section">
+                            <h5>Final Combined Rules:</h5>
+                            <pre className="final-rules">
+                                {generateFinalRules() || appLang?.rules?.no_rules_generated}
+                            </pre>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="preview-content">
+                        <pre>{generateFinalRules() || appLang?.rules?.no_rules_generated}</pre>
+                    </div>
+                )}
             </div>
 
             <Tabs active="rules" proxyMode={proxyMode} />

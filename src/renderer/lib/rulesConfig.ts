@@ -145,6 +145,22 @@ export class RulesConfigManager {
         await this.saveConfig(config);
     }
 
+    // 获取规则集模式的自定义规则
+    public static async getRulesetCustomRules(): Promise<string> {
+        const config = await this.getConfig();
+        return config.ruleset.customRules || '';
+    }
+
+    // 保存规则集模式的自定义规则
+    public static async saveRulesetCustomRules(rules: string): Promise<void> {
+        const config = await this.getConfig();
+        if (!config.ruleset.customRules) {
+            config.ruleset.customRules = '';
+        }
+        config.ruleset.customRules = rules;
+        await this.saveConfig(config);
+    }
+
     // 切换规则集状态
     public static async toggleRuleSet(ruleSetId: string): Promise<void> {
         const config = await this.getConfig();
