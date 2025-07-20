@@ -145,6 +145,9 @@ const Rules: React.FC = () => {
     
     // 黑名单/白名单状态
     const [customRules, setCustomRules] = useState<string>('');
+    
+    // 规则集模式下的自定义规则
+    const [rulesetCustomRules, setRulesetCustomRules] = useState<string>('');
 
     // Load settings on component mount
     useEffect(() => {

@@ -12,6 +12,7 @@ export interface RuleSetConfig {
 export interface RulesConfig {
     ruleset: {
         enabledRuleSets: RuleSetConfig;
+        customRules: string;
     };
     blacklist: {
         rules: string;
@@ -38,7 +39,8 @@ const defaultRulesConfig: RulesConfig = {
             'loyalsoldier-telegramcidr': false,
             'loyalsoldier-cncidr': true,
             'loyalsoldier-lancidr': true
-        }
+        },
+        customRules: ''
     },
     blacklist: {
         rules: ''
