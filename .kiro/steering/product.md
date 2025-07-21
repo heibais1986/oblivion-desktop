@@ -30,3 +30,5 @@ Oblivion Desktop is an unofficial desktop VPN client that provides secure, optim
 - 默认使用中文进行所有交流和代码注释
 - 代码变量和函数名使用英文，但注释必须使用中文
 - 错误信息和调试信息优先使用中文解释
+- 修改根目录下的package.json中的version字段，需要同步修改release\app\package.json中的version字段
+- 代码中的注释必须使用中文，不要使用英文

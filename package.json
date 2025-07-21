@@ -12,7 +12,7 @@
         "url": "https://github.com/ircfspace/oblivion-desktop/issues",
         "email": "ircfspace@gmail.com"
     },
-    "version": "2.101.13",
+    "version": "2.101.15",
     "license": "Restrictive",
     "main": "./.erb/dll/main.bundle.dev.js",
     "scripts": {

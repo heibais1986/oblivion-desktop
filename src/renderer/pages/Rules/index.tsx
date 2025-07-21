@@ -327,255 +327,278 @@ const Rules: React.FC = () => {
                 <div className='container'>
                     <Tabs active='rules' proxyMode={proxyMode} />
                     <div className='rules-page'>
+                        {proxyMode !== 'none' && (
+                            <div
+                                className={classNames('alert', {
+                                    'alert-info': proxyMode === 'tun',
+                                    'alert-warning': proxyMode === 'system'
+                                })}
+                            >
+                                <div>
+                                    <strong>
+                                        Current Mode: {proxyMode === 'tun' ? 'TUN' : 'System Proxy'}
+                                    </strong>
+                                    <p>
+                                        {proxyMode === 'tun'
+                                            ? 'Rules will be applied at the network interface level using Sing-Box routing.'
+                                            : 'Rules will be applied through system proxy settings with PAC script.'}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
-            {proxyMode !== 'none' && (
-                <div
-                    className={classNames('alert', {
-                        'alert-info': proxyMode === 'tun',
-                        'alert-warning': proxyMode === 'system'
-                    })}
-                >
-                    <div>
-                        <strong>
-                            Current Mode: {proxyMode === 'tun' ? 'TUN' : 'System Proxy'}
-                        </strong>
-                        <p>
-                            {proxyMode === 'tun'
-                                ? 'Rules will be applied at the network interface level using Sing-Box routing.'
-                                : 'Rules will be applied through system proxy settings with PAC script.'}
-                        </p>
-                    </div>
-                </div>
-            )}
-
-            {/* 模式选择 */}
-            <div className='mode-selector'>
-                <div className='mode-tabs'>
-                    <button
-                        className={classNames('mode-tab', { active: ruleMode === 'ruleset' })}
-                        onClick={() => handleModeChange('ruleset')}
-                    >
-                        <span>{appLang?.rules?.mode_ruleset || 'Rule Sets'}</span>
-                        <small>
-                            {appLang?.rules?.mode_ruleset_desc || 'Use predefined rule collections'}
-                        </small>
-                    </button>
-                    <button
-                        className={classNames('mode-tab', { active: ruleMode === 'blacklist' })}
-                        onClick={() => handleModeChange('blacklist')}
-                    >
-                        <span>{appLang?.rules?.mode_blacklist || 'Blacklist'}</span>
-                        <small>
-                            {appLang?.rules?.mode_blacklist_desc ||
-                                'Specify what goes through proxy'}
-                        </small>
-                    </button>
-                    <button
-                        className={classNames('mode-tab', { active: ruleMode === 'whitelist' })}
-                        onClick={() => handleModeChange('whitelist')}
-                    >
-                        <span>{appLang?.rules?.mode_whitelist || 'Whitelist'}</span>
-                        <small>
-                            {appLang?.rules?.mode_whitelist_desc ||
-                                'Specify what connects directly'}
-                        </small>
-                    </button>
-                </div>
-            </div>
-
-            {/* 规则集模式 */}
-            {ruleMode === 'ruleset' && (
-                <div className='ruleset-mode'>
-                    <div className='ruleset-header'>
-                        <h3>{appLang?.rules?.select_rule_sets || 'Select Rule Sets'}</h3>
-                        <p>
-                            {appLang?.rules?.select_rule_sets_desc ||
-                                'Choose from predefined rule collections'}
-                        </p>
-                    </div>
-
-                    <div className='ruleset-categories'>
-                        {/* 直连规则集 */}
-                        <div className='category-section'>
-                            <h4 className='category-title'>
-                                {appLang?.rules?.direct_connection || 'Direct Connection'}
-                            </h4>
-                            <div className='ruleset-grid'>
-                                {ruleSets
-                                    .filter((rs) => rs.category === 'direct')
-                                    .map((ruleSet) => (
-                                        <div
-                                            key={ruleSet.id}
-                                            className={classNames('ruleset-card', {
-                                                enabled: ruleSet.enabled
-                                            })}
-                                        >
-                                            <div className='ruleset-header'>
-                                                <div className='ruleset-info'>
-                                                    <h5>{ruleSet.name}</h5>
-                                                    <p>{ruleSet.description}</p>
-                                                </div>
-                                                <label className='switch'>
-                                                    <input
-                                                        type='checkbox'
-                                                        checked={ruleSet.enabled}
-                                                        onChange={() =>
-                                                            handleRuleSetToggle(ruleSet.id)
-                                                        }
-                                                    />
-                                                    <span className='slider'></span>
-                                                </label>
-                                            </div>
-                                            <div className='ruleset-preview'>
-                                                <small>
-                                                    Examples: {ruleSet.rules.slice(0, 2).join(', ')}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    ))}
+                        {/* 模式选择 */}
+                        <div className='mode-selector'>
+                            <div className='mode-tabs'>
+                                <button
+                                    className={classNames('mode-tab', {
+                                        active: ruleMode === 'ruleset'
+                                    })}
+                                    onClick={() => handleModeChange('ruleset')}
+                                >
+                                    <span>{appLang?.rules?.mode_ruleset || 'Rule Sets'}</span>
+                                    <small>
+                                        {appLang?.rules?.mode_ruleset_desc ||
+                                            'Use predefined rule collections'}
+                                    </small>
+                                </button>
+                                <button
+                                    className={classNames('mode-tab', {
+                                        active: ruleMode === 'blacklist'
+                                    })}
+                                    onClick={() => handleModeChange('blacklist')}
+                                >
+                                    <span>{appLang?.rules?.mode_blacklist || 'Blacklist'}</span>
+                                    <small>
+                                        {appLang?.rules?.mode_blacklist_desc ||
+                                            'Specify what goes through proxy'}
+                                    </small>
+                                </button>
+                                <button
+                                    className={classNames('mode-tab', {
+                                        active: ruleMode === 'whitelist'
+                                    })}
+                                    onClick={() => handleModeChange('whitelist')}
+                                >
+                                    <span>{appLang?.rules?.mode_whitelist || 'Whitelist'}</span>
+                                    <small>
+                                        {appLang?.rules?.mode_whitelist_desc ||
+                                            'Specify what connects directly'}
+                                    </small>
+                                </button>
                             </div>
                         </div>
 
-                        {/* 代理规则集 */}
-                        <div className='category-section'>
-                            <h4 className='category-title'>
-                                {appLang?.rules?.proxy_connection || 'Proxy Connection'}
-                            </h4>
-                            <div className='ruleset-grid'>
-                                {ruleSets
-                                    .filter((rs) => rs.category === 'proxy')
-                                    .map((ruleSet) => (
-                                        <div
-                                            key={ruleSet.id}
-                                            className={classNames('ruleset-card', {
-                                                enabled: ruleSet.enabled
-                                            })}
-                                        >
-                                            <div className='ruleset-header'>
-                                                <div className='ruleset-info'>
-                                                    <h5>{ruleSet.name}</h5>
-                                                    <p>{ruleSet.description}</p>
-                                                </div>
-                                                <label className='switch'>
-                                                    <input
-                                                        type='checkbox'
-                                                        checked={ruleSet.enabled}
-                                                        onChange={() =>
-                                                            handleRuleSetToggle(ruleSet.id)
-                                                        }
-                                                    />
-                                                    <span className='slider'></span>
-                                                </label>
-                                            </div>
-                                            <div className='ruleset-preview'>
-                                                <small>
-                                                    Examples: {ruleSet.rules.slice(0, 2).join(', ')}
-                                                </small>
-                                            </div>
+                        {/* 规则集模式 */}
+                        {ruleMode === 'ruleset' && (
+                            <div className='ruleset-mode'>
+                                <div className='ruleset-header'>
+                                    <h3>
+                                        {appLang?.rules?.select_rule_sets || 'Select Rule Sets'}
+                                    </h3>
+                                    <p>
+                                        {appLang?.rules?.select_rule_sets_desc ||
+                                            'Choose from predefined rule collections'}
+                                    </p>
+                                </div>
+
+                                <div className='ruleset-categories'>
+                                    {/* 直连规则集 */}
+                                    <div className='category-section'>
+                                        <h4 className='category-title'>
+                                            {appLang?.rules?.direct_connection ||
+                                                'Direct Connection'}
+                                        </h4>
+                                        <div className='ruleset-grid'>
+                                            {ruleSets
+                                                .filter((rs) => rs.category === 'direct')
+                                                .map((ruleSet) => (
+                                                    <div
+                                                        key={ruleSet.id}
+                                                        className={classNames('ruleset-card', {
+                                                            enabled: ruleSet.enabled
+                                                        })}
+                                                    >
+                                                        <div className='ruleset-header'>
+                                                            <div className='ruleset-info'>
+                                                                <h5>{ruleSet.name}</h5>
+                                                                <p>{ruleSet.description}</p>
+                                                            </div>
+                                                            <label className='switch'>
+                                                                <input
+                                                                    type='checkbox'
+                                                                    checked={ruleSet.enabled}
+                                                                    onChange={() =>
+                                                                        handleRuleSetToggle(
+                                                                            ruleSet.id
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className='slider'></span>
+                                                            </label>
+                                                        </div>
+                                                        <div className='ruleset-preview'>
+                                                            <small>
+                                                                Examples:{' '}
+                                                                {ruleSet.rules
+                                                                    .slice(0, 2)
+                                                                    .join(', ')}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                         </div>
-                                    ))}
-                            </div>
-                        </div>
+                                    </div>
 
-                        {/* 阻止规则集 */}
-                        <div className='category-section'>
-                            <h4 className='category-title'>
-                                {appLang?.rules?.block_reject || 'Block/Reject'}
-                            </h4>
-                            <div className='ruleset-grid'>
-                                {ruleSets
-                                    .filter((rs) => rs.category === 'block')
-                                    .map((ruleSet) => (
-                                        <div
-                                            key={ruleSet.id}
-                                            className={classNames('ruleset-card', {
-                                                enabled: ruleSet.enabled
-                                            })}
-                                        >
-                                            <div className='ruleset-header'>
-                                                <div className='ruleset-info'>
-                                                    <h5>{ruleSet.name}</h5>
-                                                    <p>{ruleSet.description}</p>
-                                                </div>
-                                                <label className='switch'>
-                                                    <input
-                                                        type='checkbox'
-                                                        checked={ruleSet.enabled}
-                                                        onChange={() =>
-                                                            handleRuleSetToggle(ruleSet.id)
-                                                        }
-                                                    />
-                                                    <span className='slider'></span>
-                                                </label>
-                                            </div>
-                                            <div className='ruleset-preview'>
-                                                <small>
-                                                    Examples: {ruleSet.rules.slice(0, 2).join(', ')}
-                                                </small>
-                                            </div>
+                                    {/* 代理规则集 */}
+                                    <div className='category-section'>
+                                        <h4 className='category-title'>
+                                            {appLang?.rules?.proxy_connection || 'Proxy Connection'}
+                                        </h4>
+                                        <div className='ruleset-grid'>
+                                            {ruleSets
+                                                .filter((rs) => rs.category === 'proxy')
+                                                .map((ruleSet) => (
+                                                    <div
+                                                        key={ruleSet.id}
+                                                        className={classNames('ruleset-card', {
+                                                            enabled: ruleSet.enabled
+                                                        })}
+                                                    >
+                                                        <div className='ruleset-header'>
+                                                            <div className='ruleset-info'>
+                                                                <h5>{ruleSet.name}</h5>
+                                                                <p>{ruleSet.description}</p>
+                                                            </div>
+                                                            <label className='switch'>
+                                                                <input
+                                                                    type='checkbox'
+                                                                    checked={ruleSet.enabled}
+                                                                    onChange={() =>
+                                                                        handleRuleSetToggle(
+                                                                            ruleSet.id
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className='slider'></span>
+                                                            </label>
+                                                        </div>
+                                                        <div className='ruleset-preview'>
+                                                            <small>
+                                                                Examples:{' '}
+                                                                {ruleSet.rules
+                                                                    .slice(0, 2)
+                                                                    .join(', ')}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                         </div>
-                                    ))}
+                                    </div>
+
+                                    {/* 阻止规则集 */}
+                                    <div className='category-section'>
+                                        <h4 className='category-title'>
+                                            {appLang?.rules?.block_reject || 'Block/Reject'}
+                                        </h4>
+                                        <div className='ruleset-grid'>
+                                            {ruleSets
+                                                .filter((rs) => rs.category === 'block')
+                                                .map((ruleSet) => (
+                                                    <div
+                                                        key={ruleSet.id}
+                                                        className={classNames('ruleset-card', {
+                                                            enabled: ruleSet.enabled
+                                                        })}
+                                                    >
+                                                        <div className='ruleset-header'>
+                                                            <div className='ruleset-info'>
+                                                                <h5>{ruleSet.name}</h5>
+                                                                <p>{ruleSet.description}</p>
+                                                            </div>
+                                                            <label className='switch'>
+                                                                <input
+                                                                    type='checkbox'
+                                                                    checked={ruleSet.enabled}
+                                                                    onChange={() =>
+                                                                        handleRuleSetToggle(
+                                                                            ruleSet.id
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className='slider'></span>
+                                                            </label>
+                                                        </div>
+                                                        <div className='ruleset-preview'>
+                                                            <small>
+                                                                Examples:{' '}
+                                                                {ruleSet.rules
+                                                                    .slice(0, 2)
+                                                                    .join(', ')}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        )}
 
-            {/* 黑名单模式 */}
-            {ruleMode === 'blacklist' && (
-                <div className='custom-rules-mode'>
-                    <div className='mode-description'>
-                        <h3>{appLang?.rules?.mode_blacklist || 'Blacklist Mode'}</h3>
-                        <p>
-                            {appLang?.rules?.mode_blacklist_desc ||
-                                'Specify what goes through proxy'}
-                        </p>
-                    </div>
+                        {/* 黑名单模式 */}
+                        {ruleMode === 'blacklist' && (
+                            <div className='custom-rules-mode'>
+                                <div className='mode-description'>
+                                    <h3>{appLang?.rules?.mode_blacklist || 'Blacklist Mode'}</h3>
+                                    <p>
+                                        {appLang?.rules?.mode_blacklist_desc ||
+                                            'Specify what goes through proxy'}
+                                    </p>
+                                </div>
 
-                    <div className='rules-editor'>
-                        <textarea
-                            value={customRules}
-                            onChange={(e) => setCustomRules(e.target.value)}
-                            placeholder='Enter rules, one per line:
+                                <div className='rules-editor'>
+                                    <textarea
+                                        value={customRules}
+                                        onChange={(e) => setCustomRules(e.target.value)}
+                                        placeholder='Enter rules, one per line:
 domain:google.com
 domain:*.youtube.com
 ip:8.8.8.8
 ip:192.168.1.0/24
 app:chrome.exe'
-                            rows={15}
-                            className='rules-textarea'
-                        />
-                    </div>
-                </div>
-            )}
+                                        rows={15}
+                                        className='rules-textarea'
+                                    />
+                                </div>
+                            </div>
+                        )}
 
-            {/* 白名单模式 */}
-            {ruleMode === 'whitelist' && (
-                <div className='custom-rules-mode'>
-                    <div className='mode-description'>
-                        <h3>{appLang?.rules?.mode_whitelist || 'Whitelist Mode'}</h3>
-                        <p>
-                            {appLang?.rules?.mode_whitelist_desc ||
-                                'Specify what connects directly'}
-                        </p>
-                    </div>
+                        {/* 白名单模式 */}
+                        {ruleMode === 'whitelist' && (
+                            <div className='custom-rules-mode'>
+                                <div className='mode-description'>
+                                    <h3>{appLang?.rules?.mode_whitelist || 'Whitelist Mode'}</h3>
+                                    <p>
+                                        {appLang?.rules?.mode_whitelist_desc ||
+                                            'Specify what connects directly'}
+                                    </p>
+                                </div>
 
-                    <div className='rules-editor'>
-                        <textarea
-                            value={customRules}
-                            onChange={(e) => setCustomRules(e.target.value)}
-                            placeholder='Enter rules, one per line:
+                                <div className='rules-editor'>
+                                    <textarea
+                                        value={customRules}
+                                        onChange={(e) => setCustomRules(e.target.value)}
+                                        placeholder='Enter rules, one per line:
 domain:baidu.com
 domain:*.qq.com
 ip:114.114.114.114
 ip:192.168.0.0/16'
-                            rows={15}
-                            className='rules-textarea'
-                        />
-                    </div>
-                </div>
-            )}
-
+                                        rows={15}
+                                        className='rules-textarea'
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
