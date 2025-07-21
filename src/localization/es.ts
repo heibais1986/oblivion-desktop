@@ -274,6 +274,29 @@ const spanish: Language = {
         upload_speed: 'Velocidad de Subida',
         latency: 'Latencia',
         jitter: 'Jitter'
+    },
+    rules: {
+        title: 'Reglas de Enrutamiento',
+        subtitle: 'Configura qué tráfico debe evitar la conexión VPN',
+        save_changes: 'Guardar Cambios',
+        reset: 'Restablecer',
+        mode_ruleset: 'Conjuntos de Reglas',
+        mode_blacklist: 'Lista Negra',
+        mode_whitelist: 'Lista Blanca',
+        mode_ruleset_desc: 'Usar colecciones de reglas predefinidas',
+        mode_blacklist_desc: 'Especificar qué pasa por el proxy',
+        mode_whitelist_desc: 'Especificar qué se conecta directamente',
+        select_rule_sets: 'Seleccionar Conjuntos de Reglas',
+        select_rule_sets_desc:
+            'Elige entre colecciones de reglas predefinidas basadas en Loyalsoldier/clash-rules',
+        direct_connection: 'Conexión Directa',
+        proxy_connection: 'Conexión Proxy',
+        block_reject: 'Bloquear/Rechazar',
+        generated_rules_preview: 'Vista Previa de Reglas Generadas',
+        blacklist_rules_syntax: 'Sintaxis de Reglas de Lista Negra:',
+        whitelist_rules_syntax: 'Sintaxis de Reglas de Lista Blanca:',
+        examples: 'Ejemplos',
+        no_rules_generated: 'No se han generado reglas'
     }
 };
 export default spanish;

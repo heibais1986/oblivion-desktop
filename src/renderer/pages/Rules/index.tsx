@@ -149,6 +149,129 @@ const Rules: React.FC = () => {
     const appLang = useTranslate();
     const { isConnected, isLoading } = useStore();
 
+    // Load settings on component mount - 使用安全的异步处理
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadSettings = async () => {
+            try {
+                console.log('开始加载规则设置...');
+
+                // 简化加载逻辑，先设置为已加载状态，避免无限加载
+                setIsLoaded(true);
+
+                // 1. 加载代理模式
+                try {
+                    const proxyModeValue = await settings.get('proxyMode');
+                    if (isMounted) {
+                        setProxyMode(
+                            typeof proxyModeValue === 'undefined'
+                                ? defaultSettings.proxyMode
+                                : (proxyModeValue as string)
+                        );
+                    }
+                } catch (error) {
+                    console.error('加载代理模式失败:', error);
+                    if (isMounted) setProxyMode(defaultSettings.proxyMode);
+                }
+
+                // 2. 加载当前规则模式
+                try {
+                    const currentMode = await RulesConfigManager.getCurrentMode();
+                    if (isMounted) {
+                        setRuleMode(currentMode);
+                    }
+                } catch (error) {
+                    console.error('加载规则模式失败:', error);
+                    if (isMounted) setRuleMode('ruleset');
+                }
+
+                // 3. 加载规则集配置
+                try {
+                    const ruleSetConfig = await RulesConfigManager.getRuleSetConfig();
+                    if (isMounted) {
+                        setRuleSets((prev) =>
+                            prev.map((rs) => ({
+                                ...rs,
+                                enabled:
+                                    ruleSetConfig[rs.id] !== undefined ? ruleSetConfig[rs.id] : rs.enabled
+                            }))
+                        );
+                    }
+                } catch (error) {
+                    console.error('加载规则集配置失败:', error);
+                }
+
+                console.log('规则设置加载完成');
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+                if (isMounted) {
+                    setError(error instanceof Error ? error.message : 'Failed to load settings');
+                    setIsLoaded(true);
+                }
+            }
+        };
+
+        // 添加延迟以确保 IPC 通道已准备好
+        const timer = setTimeout(() => {
+            loadSettings();
+        }, 100);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timer);
+        };
+    }, []);
+
+    // 处理规则集切换
+    const handleRuleSetToggle = useCallback(
+        async (ruleSetId: string) => {
+            try {
+                const newRuleSets = ruleSets.map((rs) =>
+                    rs.id === ruleSetId ? { ...rs, enabled: !rs.enabled } : rs
+                );
+                setRuleSets(newRuleSets);
+
+                // 保存到配置文件
+                const ruleSetConfig = newRuleSets.reduce(
+                    (acc, rs) => {
+                        acc[rs.id] = rs.enabled;
+                        return acc;
+                    },
+                    {} as { [key: string]: boolean }
+                );
+
+                await RulesConfigManager.saveRuleSetConfig(ruleSetConfig);
+
+                // 如果当前已连接，提示用户重新连接
+                if (isConnected) {
+                    settingsHaveChangedToast({ isConnected, isLoading, appLang });
+                }
+            } catch (error) {
+                console.error('Failed to toggle rule set:', error);
+            }
+        },
+        [ruleSets, isConnected, isLoading, appLang]
+    );
+
+    // 处理模式切换
+    const handleModeChange = useCallback(
+        async (mode: RuleMode) => {
+            try {
+                setRuleMode(mode);
+                await RulesConfigManager.setCurrentMode(mode);
+
+                // 如果当前已连接，提示用户重新连接
+                if (isConnected) {
+                    settingsHaveChangedToast({ isConnected, isLoading, appLang });
+                }
+            } catch (error) {
+                console.error('Failed to change mode:', error);
+            }
+        },
+        [isConnected, isLoading, appLang]
+    );
+
     // 如果有错误，显示错误信息
     if (error) {
         return (
@@ -194,315 +317,12 @@ const Rules: React.FC = () => {
         );
     }
 
-    // Load settings on component mount - 使用安全的异步处理
-    useEffect(() => {
-        let isMounted = true; // 防止组件卸载后状态更新
-
-        const loadSettings = async () => {
-            try {
-                console.log('开始加载规则设置...');
-
-                if (!isMounted) return;
-
-                // 1. 加载代理模式
-                console.log('1. 加载代理模式...');
-                const proxyModeValue = await settings.get('proxyMode');
-                if (!isMounted) return;
-                setProxyMode(
-                    typeof proxyModeValue === 'undefined'
-                        ? defaultSettings.proxyMode
-                        : (proxyModeValue as string)
-                );
-                console.log('代理模式加载完成:', proxyModeValue);
-
-                // 2. 加载当前规则模式
-                console.log('2. 加载当前规则模式...');
-                const currentMode = await RulesConfigManager.getCurrentMode();
-                if (!isMounted) return;
-                setRuleMode(currentMode);
-                console.log('当前规则模式:', currentMode);
-
-                // 3. 加载规则集配置
-                console.log('3. 加载规则集配置...');
-                const ruleSetConfig = await RulesConfigManager.getRuleSetConfig();
-                if (!isMounted) return;
-                console.log('规则集配置:', ruleSetConfig);
-
-                setRuleSets((prev) =>
-                    prev.map((rs) => ({
-                        ...rs,
-                        enabled:
-                            ruleSetConfig[rs.id] !== undefined ? ruleSetConfig[rs.id] : rs.enabled
-                    }))
-                );
-
-                // 4. 根据当前模式加载对应的自定义规则
-                console.log('4. 加载自定义规则...');
-                if (currentMode === 'blacklist') {
-                    const blacklistRules = await RulesConfigManager.getBlacklistRules();
-                    if (!isMounted) return;
-                    setCustomRules(blacklistRules);
-                    console.log('黑名单规则加载完成');
-                } else if (currentMode === 'whitelist') {
-                    const whitelistRules = await RulesConfigManager.getWhitelistRules();
-                    if (!isMounted) return;
-                    setCustomRules(whitelistRules);
-                    console.log('白名单规则加载完成');
-                } else if (currentMode === 'ruleset') {
-                    try {
-                        const rulesetCustom = await RulesConfigManager.getRulesetCustomRules();
-                        if (!isMounted) return;
-                        setRulesetCustomRules(rulesetCustom || '');
-                        console.log('规则集自定义规则加载完成');
-                    } catch (error) {
-                        console.error('Failed to load ruleset custom rules:', error);
-                        if (!isMounted) return;
-                        setRulesetCustomRules('');
-                    }
-                }
-
-                console.log('5. 所有设置加载完成');
-                if (!isMounted) return;
-                setIsLoaded(true);
-            } catch (error) {
-                console.error('Failed to load settings:', error);
-                if (!isMounted) return;
-                setError(error instanceof Error ? error.message : 'Failed to load settings');
-                setIsLoaded(true);
-            }
-        };
-
-        loadSettings();
-
-        // 清理函数
-        return () => {
-            isMounted = false;
-        };
-    }, []);
-
-    // 处理规则集切换 - 立即保存
-    const handleRuleSetToggle = useCallback(
-        async (ruleSetId: string) => {
-            const newRuleSets = ruleSets.map((rs) =>
-                rs.id === ruleSetId ? { ...rs, enabled: !rs.enabled } : rs
-            );
-            setRuleSets(newRuleSets);
-
-            // 立即保存到配置文件
-            const ruleSetConfig = newRuleSets.reduce(
-                (acc, rs) => {
-                    acc[rs.id] = rs.enabled;
-                    return acc;
-                },
-                {} as { [key: string]: boolean }
-            );
-
-            await RulesConfigManager.saveRuleSetConfig(ruleSetConfig);
-            await saveCurrentRulesToSettings(
-                ruleMode,
-                newRuleSets,
-                customRules,
-                rulesetCustomRules
-            );
-
-            // 如果当前已连接，提示用户重新连接以应用新规则
-            if (isConnected) {
-                settingsHaveChangedToast({ isConnected, isLoading, appLang });
-            }
-        },
-        [ruleSets, ruleMode, customRules, rulesetCustomRules, isConnected, isLoading, appLang]
-    );
-
-    // 处理模式切换 - 立即保存并加载对应配置
-    const handleModeChange = useCallback(
-        async (mode: RuleMode) => {
-            // 保存当前模式的配置
-            if (ruleMode === 'blacklist') {
-                await RulesConfigManager.saveBlacklistRules(customRules);
-            } else if (ruleMode === 'whitelist') {
-                await RulesConfigManager.saveWhitelistRules(customRules);
-            }
-
-            // 切换模式
-            setRuleMode(mode);
-            await RulesConfigManager.setCurrentMode(mode);
-
-            // 加载新模式的配置
-            if (mode === 'blacklist') {
-                const blacklistRules = await RulesConfigManager.getBlacklistRules();
-                setCustomRules(blacklistRules);
-            } else if (mode === 'whitelist') {
-                const whitelistRules = await RulesConfigManager.getWhitelistRules();
-                setCustomRules(whitelistRules);
-            } else {
-                setCustomRules('');
-            }
-
-            await saveCurrentRulesToSettings(
-                mode,
-                ruleSets,
-                mode === 'blacklist'
-                    ? await RulesConfigManager.getBlacklistRules()
-                    : mode === 'whitelist'
-                      ? await RulesConfigManager.getWhitelistRules()
-                      : '',
-                mode === 'ruleset' ? rulesetCustomRules : undefined
-            );
-
-            // 如果当前已连接，提示用户重新连接以应用新规则
-            if (isConnected) {
-                settingsHaveChangedToast({ isConnected, isLoading, appLang });
-            }
-        },
-        [ruleMode, customRules, ruleSets, rulesetCustomRules, isConnected, isLoading, appLang]
-    );
-
-    // 处理自定义规则更改 - 使用防抖延迟保存
-    const handleCustomRulesChange = useCallback((rules: string) => {
-        setCustomRules(rules);
-    }, []);
-
-    // 处理输入框失焦 - 立即保存
-    const handleCustomRulesBlur = useCallback(async () => {
-        if (ruleMode === 'blacklist') {
-            await RulesConfigManager.saveBlacklistRules(customRules);
-        } else if (ruleMode === 'whitelist') {
-            await RulesConfigManager.saveWhitelistRules(customRules);
-        }
-        await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules, rulesetCustomRules);
-
-        // 如果当前已连接，提示用户重新连接以应用新规则
-        if (isConnected) {
-            settingsHaveChangedToast({ isConnected, isLoading, appLang });
-        }
-    }, [ruleMode, customRules, ruleSets, rulesetCustomRules, isConnected, isLoading, appLang]);
-
-    // 处理规则集自定义规则更改
-    const handleRulesetCustomRulesChange = useCallback((rules: string) => {
-        setRulesetCustomRules(rules);
-    }, []);
-
-    // 处理规则集自定义规则失焦 - 立即保存
-    const handleRulesetCustomRulesBlur = useCallback(async () => {
-        await RulesConfigManager.saveRulesetCustomRules(rulesetCustomRules);
-        await saveCurrentRulesToSettings(ruleMode, ruleSets, customRules, rulesetCustomRules);
-
-        // 如果当前已连接，提示用户重新连接以应用新规则
-        if (isConnected) {
-            settingsHaveChangedToast({ isConnected, isLoading, appLang });
-        }
-    }, [ruleMode, ruleSets, customRules, rulesetCustomRules, isConnected, isLoading, appLang]);
-
-    // 为指定模式生成最终规则
-    const generateFinalRulesForMode = useCallback(
-        (
-            mode: RuleMode,
-            currentRuleSets: RuleSet[],
-            currentCustomRules: string,
-            rulesetCustom?: string
-        ): string => {
-            switch (mode) {
-                case 'ruleset':
-                    const enabledRuleSets = currentRuleSets.filter((rs) => rs.enabled);
-                    const allRules: string[] = [];
-
-                    // 按优先级排序：block > direct > proxy
-                    const sortedRuleSets = enabledRuleSets.sort((a, b) => {
-                        const priority = { block: 0, direct: 1, proxy: 2 };
-                        return (
-                            priority[a.category as keyof typeof priority] -
-                            priority[b.category as keyof typeof priority]
-                        );
-                    });
-
-                    sortedRuleSets.forEach((ruleSet) => {
-                        ruleSet.rules.forEach((rule) => {
-                            if (ruleSet.category === 'block') {
-                                // 阻止规则：使用!前缀表示例外（这些域名走代理）
-                                allRules.push(`domain:!${rule.replace(/^DOMAIN-SUFFIX,/, '')}`);
-                            } else if (ruleSet.category === 'direct') {
-                                // 直连规则
-                                if (rule.startsWith('DOMAIN-SUFFIX,')) {
-                                    const domain = rule.replace('DOMAIN-SUFFIX,', '');
-                                    // 如果是通配符域名，使用domain:*.格式
-                                    allRules.push(`domain:*.${domain}`);
-                                } else if (rule.startsWith('IP-CIDR,')) {
-                                    // IP段规则，使用ip:前缀
-                                    allRules.push(`ip:${rule.replace('IP-CIDR,', '')}`);
-                                }
-                            }
-                            // proxy 类型的规则不需要添加到直连列表中，因为默认就是走代理
-                        });
-                    });
-
-                    // 添加用户自定义规则（如果有的话）
-                    if (rulesetCustom && rulesetCustom.trim()) {
-                        const customRuleLines = rulesetCustom
-                            .trim()
-                            .split('\n')
-                            .filter((line) => line.trim());
-                        allRules.push(...customRuleLines);
-                    }
-
-                    // 使用换行符连接规则，这是解析器期望的格式
-                    return allRules.join('\n');
-
-                case 'blacklist':
-                case 'whitelist':
-                    return currentCustomRules;
-
-                default:
-                    return '';
-            }
-        },
-        []
-    );
-
-    // 生成最终的路由规则（用于预览）
-    const generateFinalRules = useCallback((): string => {
-        return generateFinalRulesForMode(ruleMode, ruleSets, customRules, rulesetCustomRules);
-    }, [ruleMode, ruleSets, customRules, rulesetCustomRules, generateFinalRulesForMode]);
-
-    // 保存当前规则到系统设置
-    const saveCurrentRulesToSettings = useCallback(
-        async (
-            mode: RuleMode,
-            currentRuleSets: RuleSet[],
-            currentCustomRules: string,
-            rulesetCustom?: string
-        ) => {
-            try {
-                const finalRules = generateFinalRulesForMode(
-                    mode,
-                    currentRuleSets,
-                    currentCustomRules,
-                    rulesetCustom
-                );
-                await settings.set('routingRules', finalRules);
-            } catch (error) {
-                console.error('Failed to save rules to settings:', error);
-            }
-        },
-        [generateFinalRulesForMode]
-    );
-
-    if (!isLoaded) {
-        return (
-            <div className='rules-page'>
-                <div className='loading-state'>
-                    <div className='spinner'></div>
-                    <p>Loading routing rules...</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className='rules-page'>
             <div className='rules-header'>
                 <div className='rules-title'>
-                    <h2>{appLang?.rules?.title}</h2>
-                    <p className='rules-subtitle'>{appLang?.rules?.subtitle} - 配置会自动保存</p>
+                    <h2>{appLang?.rules?.title || 'Routing Rules'}</h2>
+                    <p className='rules-subtitle'>{appLang?.rules?.subtitle || 'Configure routing rules'}</p>
                 </div>
             </div>
 
@@ -513,7 +333,6 @@ const Rules: React.FC = () => {
                         'alert-warning': proxyMode === 'system'
                     })}
                 >
-                    <i className='material-icons'>info</i>
                     <div>
                         <strong>
                             Current Mode: {proxyMode === 'tun' ? 'TUN' : 'System Proxy'}
@@ -534,25 +353,22 @@ const Rules: React.FC = () => {
                         className={classNames('mode-tab', { active: ruleMode === 'ruleset' })}
                         onClick={() => handleModeChange('ruleset')}
                     >
-                        <i className='material-icons'>rule</i>
-                        <span>{appLang?.rules?.mode_ruleset}</span>
-                        <small>{appLang?.rules?.mode_ruleset_desc}</small>
+                        <span>{appLang?.rules?.mode_ruleset || 'Rule Sets'}</span>
+                        <small>{appLang?.rules?.mode_ruleset_desc || 'Use predefined rule collections'}</small>
                     </button>
                     <button
                         className={classNames('mode-tab', { active: ruleMode === 'blacklist' })}
                         onClick={() => handleModeChange('blacklist')}
                     >
-                        <i className='material-icons'>block</i>
-                        <span>{appLang?.rules?.mode_blacklist}</span>
-                        <small>{appLang?.rules?.mode_blacklist_desc}</small>
+                        <span>{appLang?.rules?.mode_blacklist || 'Blacklist'}</span>
+                        <small>{appLang?.rules?.mode_blacklist_desc || 'Specify what goes through proxy'}</small>
                     </button>
                     <button
                         className={classNames('mode-tab', { active: ruleMode === 'whitelist' })}
                         onClick={() => handleModeChange('whitelist')}
                     >
-                        <i className='material-icons'>check_circle</i>
-                        <span>{appLang?.rules?.mode_whitelist}</span>
-                        <small>{appLang?.rules?.mode_whitelist_desc}</small>
+                        <span>{appLang?.rules?.mode_whitelist || 'Whitelist'}</span>
+                        <small>{appLang?.rules?.mode_whitelist_desc || 'Specify what connects directly'}</small>
                     </button>
                 </div>
             </div>
@@ -561,16 +377,15 @@ const Rules: React.FC = () => {
             {ruleMode === 'ruleset' && (
                 <div className='ruleset-mode'>
                     <div className='ruleset-header'>
-                        <h3>{appLang?.rules?.select_rule_sets}</h3>
-                        <p>{appLang?.rules?.select_rule_sets_desc}</p>
+                        <h3>{appLang?.rules?.select_rule_sets || 'Select Rule Sets'}</h3>
+                        <p>{appLang?.rules?.select_rule_sets_desc || 'Choose from predefined rule collections'}</p>
                     </div>
 
                     <div className='ruleset-categories'>
                         {/* 直连规则集 */}
                         <div className='category-section'>
                             <h4 className='category-title'>
-                                <i className='material-icons'>home</i>
-                                {appLang?.rules?.direct_connection}
+                                {appLang?.rules?.direct_connection || 'Direct Connection'}
                             </h4>
                             <div className='ruleset-grid'>
                                 {ruleSets
@@ -611,8 +426,7 @@ const Rules: React.FC = () => {
                         {/* 代理规则集 */}
                         <div className='category-section'>
                             <h4 className='category-title'>
-                                <i className='material-icons'>vpn_lock</i>
-                                {appLang?.rules?.proxy_connection}
+                                {appLang?.rules?.proxy_connection || 'Proxy Connection'}
                             </h4>
                             <div className='ruleset-grid'>
                                 {ruleSets
@@ -653,8 +467,7 @@ const Rules: React.FC = () => {
                         {/* 阻止规则集 */}
                         <div className='category-section'>
                             <h4 className='category-title'>
-                                <i className='material-icons'>block</i>
-                                {appLang?.rules?.block_reject}
+                                {appLang?.rules?.block_reject || 'Block/Reject'}
                             </h4>
                             <div className='ruleset-grid'>
                                 {ruleSets
@@ -699,15 +512,14 @@ const Rules: React.FC = () => {
             {ruleMode === 'blacklist' && (
                 <div className='custom-rules-mode'>
                     <div className='mode-description'>
-                        <h3>{appLang?.rules?.mode_blacklist}</h3>
-                        <p>{appLang?.rules?.mode_blacklist_desc}</p>
+                        <h3>{appLang?.rules?.mode_blacklist || 'Blacklist Mode'}</h3>
+                        <p>{appLang?.rules?.mode_blacklist_desc || 'Specify what goes through proxy'}</p>
                     </div>
 
                     <div className='rules-editor'>
                         <textarea
                             value={customRules}
-                            onChange={(e) => handleCustomRulesChange(e.target.value)}
-                            onBlur={handleCustomRulesBlur}
+                            onChange={(e) => setCustomRules(e.target.value)}
                             placeholder='Enter rules, one per line:
 domain:google.com
 domain:*.youtube.com
@@ -718,27 +530,6 @@ app:chrome.exe'
                             className='rules-textarea'
                         />
                     </div>
-
-                    <div className='rules-help'>
-                        <h4>Blacklist Rules Syntax:</h4>
-                        <ul>
-                            <li>
-                                <code>domain:example.com</code> - Proxy specific domain
-                            </li>
-                            <li>
-                                <code>domain:*.example.com</code> - Proxy all subdomains
-                            </li>
-                            <li>
-                                <code>ip:8.8.8.8</code> - Proxy specific IP
-                            </li>
-                            <li>
-                                <code>ip:192.168.0.0/24</code> - Proxy IP range
-                            </li>
-                            <li>
-                                <code>app:chrome.exe</code> - Proxy specific application
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             )}
 
@@ -746,104 +537,27 @@ app:chrome.exe'
             {ruleMode === 'whitelist' && (
                 <div className='custom-rules-mode'>
                     <div className='mode-description'>
-                        <h3>{appLang?.rules?.mode_whitelist}</h3>
-                        <p>{appLang?.rules?.mode_whitelist_desc}</p>
+                        <h3>{appLang?.rules?.mode_whitelist || 'Whitelist Mode'}</h3>
+                        <p>{appLang?.rules?.mode_whitelist_desc || 'Specify what connects directly'}</p>
                     </div>
 
                     <div className='rules-editor'>
                         <textarea
                             value={customRules}
-                            onChange={(e) => handleCustomRulesChange(e.target.value)}
-                            onBlur={handleCustomRulesBlur}
+                            onChange={(e) => setCustomRules(e.target.value)}
                             placeholder='Enter rules, one per line:
 domain:baidu.com
-domain:*.cn
+domain:*.qq.com
 ip:114.114.114.114
-ip:192.168.0.0/16
-app:wechat.exe'
+ip:192.168.0.0/16'
                             rows={15}
                             className='rules-textarea'
                         />
                     </div>
-
-                    <div className='rules-help'>
-                        <h4>Whitelist Rules Syntax:</h4>
-                        <ul>
-                            <li>
-                                <code>domain:example.com</code> - Direct connect to domain
-                            </li>
-                            <li>
-                                <code>domain:*.cn</code> - Direct connect to all .cn domains
-                            </li>
-                            <li>
-                                <code>ip:114.114.114.114</code> - Direct connect to IP
-                            </li>
-                            <li>
-                                <code>ip:10.0.0.0/8</code> - Direct connect to IP range
-                            </li>
-                            <li>
-                                <code>app:wechat.exe</code> - Direct connect for application
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             )}
 
-            {/* 规则预览 */}
-            <div className='rules-preview'>
-                <h4>{appLang?.rules?.generated_rules_preview}</h4>
-                {ruleMode === 'ruleset' ? (
-                    <div className='editable-preview'>
-                        <div className='preview-description'>
-                            <p>Generated rules from rule sets + your custom rules:</p>
-                        </div>
-
-                        {/* 自定义规则编辑区 */}
-                        <div className='custom-rules-section'>
-                            <h5>Add Your Custom Rules:</h5>
-                            <textarea
-                                value={rulesetCustomRules}
-                                onChange={(e) => handleRulesetCustomRulesChange(e.target.value)}
-                                onBlur={handleRulesetCustomRulesBlur}
-                                placeholder={`Add custom rules, one per line:
-app:WeChat.exe
-app:firefox.exe
-domain:example.com
-ip:192.168.1.0/24`}
-                                rows={6}
-                                className='custom-rules-textarea'
-                            />
-                            <div className='custom-rules-help'>
-                                <small>
-                                    <strong>Syntax:</strong>
-                                    <code>app:AppName.exe</code>,<code>domain:example.com</code>,
-                                    <code>ip:192.168.1.0/24</code>
-                                </small>
-                            </div>
-                        </div>
-
-                        {/* 最终规则预览 */}
-                        <div className='final-rules-section'>
-                            <h5>Final Combined Rules:</h5>
-                            <pre className='final-rules'>
-                                {generateFinalRules() || appLang?.rules?.no_rules_generated}
-                            </pre>
-                        </div>
-                    </div>
-                ) : (
-                    <div className='preview-content'>
-                        <pre>{generateFinalRules() || appLang?.rules?.no_rules_generated}</pre>
-                    </div>
-                )}
-            </div>
-
-            <Tabs active='rules' proxyMode={proxyMode} />
-
-            <Toaster
-                position='bottom-center'
-                reverseOrder={false}
-                containerStyle={{ bottom: '70px' }}
-            />
+            <Toaster />
         </div>
     );
 };

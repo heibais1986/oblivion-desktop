@@ -269,6 +269,28 @@ const urdu: Language = {
         upload_speed: 'اپلوڈ اسپیڈ',
         latency: 'لیٹنسی',
         jitter: 'جٹر'
+    },
+    rules: {
+        title: 'روٹنگ قواعد',
+        subtitle: 'کون سا ٹریفک VPN کنکشن کو بائی پاس کرے گا، اس کی ترتیب کریں',
+        save_changes: 'تبدیلیاں محفوظ کریں',
+        reset: 'دوبارہ ترتیب دیں',
+        mode_ruleset: 'قواعد کے سیٹ',
+        mode_blacklist: 'بلیک لسٹ',
+        mode_whitelist: 'وائٹ لسٹ',
+        mode_ruleset_desc: 'پہلے سے طے شدہ قواعد کے مجموعے استعمال کریں',
+        mode_blacklist_desc: 'پراکسی کے ذریعے کیا جائے گا، اس کی وضاحت کریں',
+        mode_whitelist_desc: 'براہ راست کیا جڑے گا، اس کی وضاحت کریں',
+        select_rule_sets: 'قواعد کے سیٹ منتخب کریں',
+        select_rule_sets_desc: 'Loyalsoldier/clash-rules پر مبنی پہلے سے طے شدہ قواعد کے مجموعوں میں سے انتخاب کریں',
+        direct_connection: 'براہ راست کنکشن',
+        proxy_connection: 'پراکسی کنکشن',
+        block_reject: 'بلاک/مسترد',
+        generated_rules_preview: 'تیار کردہ قواعد کا پیش نظارہ',
+        blacklist_rules_syntax: 'بلیک لسٹ قواعد کی نحو:',
+        whitelist_rules_syntax: 'وائٹ لسٹ قواعد کی نحو:',
+        examples: 'مثالیں',
+        no_rules_generated: 'کوئی قواعد تیار نہیں کیے گئے'
     }
 };
 export default urdu;

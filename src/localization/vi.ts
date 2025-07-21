@@ -269,6 +269,28 @@ const vietnamese: Language = {
         upload_speed: 'Tốc độ tải lên',
         latency: 'Độ trễ',
         jitter: 'Độ dao động'
+    },
+    rules: {
+        title: 'Quy tắc định tuyến',
+        subtitle: 'Cấu hình lưu lượng nào nên bỏ qua kết nối VPN',
+        save_changes: 'Lưu thay đổi',
+        reset: 'Đặt lại',
+        mode_ruleset: 'Bộ quy tắc',
+        mode_blacklist: 'Danh sách đen',
+        mode_whitelist: 'Danh sách trắng',
+        mode_ruleset_desc: 'Sử dụng bộ quy tắc được xác định trước',
+        mode_blacklist_desc: 'Chỉ định những gì đi qua proxy',
+        mode_whitelist_desc: 'Chỉ định những gì kết nối trực tiếp',
+        select_rule_sets: 'Chọn bộ quy tắc',
+        select_rule_sets_desc: 'Chọn từ các bộ quy tắc được xác định trước dựa trên Loyalsoldier/clash-rules',
+        direct_connection: 'Kết nối trực tiếp',
+        proxy_connection: 'Kết nối proxy',
+        block_reject: 'Chặn/Từ chối',
+        generated_rules_preview: 'Xem trước quy tắc đã tạo',
+        blacklist_rules_syntax: 'Cú pháp quy tắc danh sách đen:',
+        whitelist_rules_syntax: 'Cú pháp quy tắc danh sách trắng:',
+        examples: 'Ví dụ',
+        no_rules_generated: 'Không có quy tắc nào được tạo'
     }
 };
 export default vietnamese;

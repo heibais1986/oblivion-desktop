@@ -257,6 +257,28 @@ const amharic: Language = {
         upload_speed: 'አፕሎድ ፍጥነት',
         latency: 'ሳምንት',
         jitter: 'ጂተር'
+    },
+    rules: {
+        title: 'የማስተላለፊያ ህጎች',
+        subtitle: 'የትኛው ትራፊክ VPN ግንኙነትን መዝለል እንዳለበት ያዋቅሩ',
+        save_changes: 'ለውጦችን አስቀምጥ',
+        reset: 'ዳግም አስጀምር',
+        mode_ruleset: 'የህግ ስብስቦች',
+        mode_blacklist: 'ጥቁር ዝርዝር',
+        mode_whitelist: 'ነጭ ዝርዝር',
+        mode_ruleset_desc: 'አስቀድሞ የተገለጹ የህግ ስብስቦችን ይጠቀሙ',
+        mode_blacklist_desc: 'በፕሮክሲ የሚያልፈውን ይግለጹ',
+        mode_whitelist_desc: 'በቀጥታ የሚገናኘውን ይግለጹ',
+        select_rule_sets: 'የህግ ስብስቦችን ይምረጡ',
+        select_rule_sets_desc: 'በLoyalsoldier/clash-rules ላይ የተመሰረቱ አስቀድሞ የተገለጹ የህግ ስብስቦችን ይምረጡ',
+        direct_connection: 'ቀጥተኛ ግንኙነት',
+        proxy_connection: 'ፕሮክሲ ግንኙነት',
+        block_reject: 'አግድ/ውድቅ አድርግ',
+        generated_rules_preview: 'የተፈጠሩ ህጎች ቅድመ እይታ',
+        blacklist_rules_syntax: 'የጥቁር ዝርዝር ህጎች አገባብ:',
+        whitelist_rules_syntax: 'የነጭ ዝርዝር ህጎች አገባብ:',
+        examples: 'ምሳሌዎች',
+        no_rules_generated: 'ምንም ህጎች አልተፈጠሩም'
     }
 };
 export default amharic;

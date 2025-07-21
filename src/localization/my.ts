@@ -268,6 +268,29 @@ const myanmar: Language = {
         upload_speed: 'တင်လိုက် အမြန်နှုန်း',
         latency: 'လက်ရှိနှောင့်နှေးမှု',
         jitter: 'Jitter'
+    },
+    rules: {
+        title: 'လမ်းကြောင်းစည်းမျဉ်းများ',
+        subtitle: 'VPN ချိတ်ဆက်မှုကို ကျော်လွှားသင့်သော traffic ကို ပြင်ဆင်ပါ',
+        save_changes: 'ပြောင်းလဲမှုများကို သိမ်းဆည်းပါ',
+        reset: 'ပြန်လည်သတ်မှတ်ပါ',
+        mode_ruleset: 'စည်းမျဉ်းအစုအဝေး',
+        mode_blacklist: 'ပိတ်ပင်စာရင်း',
+        mode_whitelist: 'ခွင့်ပြုစာရင်း',
+        mode_ruleset_desc: 'ကြိုတင်သတ်မှတ်ထားသော စည်းမျဉ်းစုစည်းမှုများကို အသုံးပြုပါ',
+        mode_blacklist_desc: 'ပရောက်ဆီမှတဆင့် မည်သည့်အရာသွားရမည်ကို သတ်မှတ်ပါ',
+        mode_whitelist_desc: 'တိုက်ရိုက်ချိတ်ဆက်မည့်အရာကို သတ်မှတ်ပါ',
+        select_rule_sets: 'စည်းမျဉ်းအစုအဝေးများကို ရွေးချယ်ပါ',
+        select_rule_sets_desc:
+            'Loyalsoldier/clash-rules ပေါ်တွင် အခြေခံသော ကြိုတင်သတ်မှတ်ထားသော စည်းမျဉ်းစုစည်းမှုများမှ ရွေးချယ်ပါ',
+        direct_connection: 'တိုက်ရိုက်ချိတ်ဆက်မှု',
+        proxy_connection: 'ပရောက်ဆီချိတ်ဆက်မှု',
+        block_reject: 'ပိတ်ဆို့/ငြင်းပယ်',
+        generated_rules_preview: 'ထုတ်လုပ်ထားသော စည်းမျဉ်းများ အကြိုမြင်ကွင်း',
+        blacklist_rules_syntax: 'ပိတ်ပင်စာရင်း စည်းမျဉ်းဝါကျဖွဲ့စည်းပုံ:',
+        whitelist_rules_syntax: 'ခွင့်ပြုစာရင်း စည်းမျဉ်းဝါကျဖွဲ့စည်းပုံ:',
+        examples: 'ဥပမာများ',
+        no_rules_generated: 'စည်းမျဉ်းများ မထုတ်လုပ်ရသေးပါ'
     }
 };
 export default myanmar;

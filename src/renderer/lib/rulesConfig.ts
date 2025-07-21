@@ -57,13 +57,11 @@ export class RulesConfigManager {
     // 获取完整配置
     public static async getConfig(): Promise<RulesConfig> {
         return new Promise((resolve) => {
-            ipcRenderer.sendMessage('settings', {
-                mode: 'get',
-                key: this.CONFIG_KEY
-            });
-
-            ipcRenderer.on('settings', (res: any) => {
+            const handleResponse = (res: any) => {
                 if (res.key === this.CONFIG_KEY) {
+                    // 移除监听器避免内存泄漏
+                    ipcRenderer.removeListener('settings', handleResponse);
+                    
                     try {
                         const config = res.value ? JSON.parse(res.value) : defaultRulesConfig;
                         resolve({ ...defaultRulesConfig, ...config });
@@ -72,6 +70,13 @@ export class RulesConfigManager {
                         resolve(defaultRulesConfig);
                     }
                 }
+            };
+
+            ipcRenderer.on('settings', handleResponse);
+            
+            ipcRenderer.sendMessage('settings', {
+                mode: 'get',
+                key: this.CONFIG_KEY
             });
         });
     }
@@ -79,16 +84,20 @@ export class RulesConfigManager {
     // 保存完整配置
     public static async saveConfig(config: RulesConfig): Promise<void> {
         return new Promise((resolve) => {
+            const handleResponse = (res: any) => {
+                if (res.key === this.CONFIG_KEY) {
+                    // 移除监听器避免内存泄漏
+                    ipcRenderer.removeListener('settings', handleResponse);
+                    resolve();
+                }
+            };
+
+            ipcRenderer.on('settings', handleResponse);
+            
             ipcRenderer.sendMessage('settings', {
                 mode: 'set',
                 key: this.CONFIG_KEY,
                 value: JSON.stringify(config)
-            });
-
-            ipcRenderer.on('settings', (res: any) => {
-                if (res.key === this.CONFIG_KEY) {
-                    resolve();
-                }
             });
         });
     }
