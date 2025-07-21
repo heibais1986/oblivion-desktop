@@ -134,68 +134,144 @@ const RULE_SETS: RuleSet[] = [
 ];
 
 const Rules: React.FC = () => {
-    const appLang = useTranslate();
-    const { isConnected, isLoading } = useStore();
+    // 基础状态
+    const [error, setError] = useState<string | null>(null);
+    const [isLoaded, setIsLoaded] = useState(false);
     const [ruleMode, setRuleMode] = useState<RuleMode>('ruleset');
     const [proxyMode, setProxyMode] = useState<string>('');
-    const [isLoaded, setIsLoaded] = useState(false);
     
-    // 规则集状态
+    // 规则相关状态
     const [ruleSets, setRuleSets] = useState<RuleSet[]>(RULE_SETS);
-    
-    // 黑名单/白名单状态
     const [customRules, setCustomRules] = useState<string>('');
-    
-    // 规则集模式下的自定义规则
     const [rulesetCustomRules, setRulesetCustomRules] = useState<string>('');
 
-    // Load settings on component mount
+    // Hooks - 使用安全的方式
+    const appLang = useTranslate();
+    const { isConnected, isLoading } = useStore();
+
+    // 如果有错误，显示错误信息
+    if (error) {
+        return (
+            <div className="rules-page">
+                <div style={{ 
+                    padding: '20px', 
+                    background: '#fee', 
+                    border: '1px solid #fcc', 
+                    borderRadius: '8px',
+                    margin: '20px'
+                }}>
+                    <h2 style={{ color: '#c33' }}>规则页面错误</h2>
+                    <p>错误信息: {error}</p>
+                    <p>请检查浏览器控制台获取更多详细信息</p>
+                    <button 
+                        onClick={() => window.location.reload()} 
+                        style={{ 
+                            padding: '10px 20px', 
+                            background: '#007bff', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        重新加载页面
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isLoaded) {
+        return (
+            <div className="rules-page">
+                <div className="loading-state">
+                    <div className="spinner"></div>
+                    <p>Loading routing rules...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Load settings on component mount - 使用安全的异步处理
     useEffect(() => {
+        let isMounted = true; // 防止组件卸载后状态更新
+
         const loadSettings = async () => {
             try {
-                // 加载代理模式
+                console.log('开始加载规则设置...');
+                
+                if (!isMounted) return;
+
+                // 1. 加载代理模式
+                console.log('1. 加载代理模式...');
                 const proxyModeValue = await settings.get('proxyMode');
+                if (!isMounted) return;
                 setProxyMode(typeof proxyModeValue === 'undefined' 
                     ? defaultSettings.proxyMode 
                     : proxyModeValue as string);
+                console.log('代理模式加载完成:', proxyModeValue);
 
-                // 从新的配置管理器加载配置
+                // 2. 加载当前规则模式
+                console.log('2. 加载当前规则模式...');
                 const currentMode = await RulesConfigManager.getCurrentMode();
+                if (!isMounted) return;
                 setRuleMode(currentMode);
+                console.log('当前规则模式:', currentMode);
 
-                // 加载规则集配置
+                // 3. 加载规则集配置
+                console.log('3. 加载规则集配置...');
                 const ruleSetConfig = await RulesConfigManager.getRuleSetConfig();
+                if (!isMounted) return;
+                console.log('规则集配置:', ruleSetConfig);
+                
                 setRuleSets(prev => prev.map(rs => ({
                     ...rs,
                     enabled: ruleSetConfig[rs.id] !== undefined ? ruleSetConfig[rs.id] : rs.enabled
                 })));
 
-                // 根据当前模式加载对应的自定义规则
+                // 4. 根据当前模式加载对应的自定义规则
+                console.log('4. 加载自定义规则...');
                 if (currentMode === 'blacklist') {
                     const blacklistRules = await RulesConfigManager.getBlacklistRules();
+                    if (!isMounted) return;
                     setCustomRules(blacklistRules);
+                    console.log('黑名单规则加载完成');
                 } else if (currentMode === 'whitelist') {
                     const whitelistRules = await RulesConfigManager.getWhitelistRules();
+                    if (!isMounted) return;
                     setCustomRules(whitelistRules);
+                    console.log('白名单规则加载完成');
                 } else if (currentMode === 'ruleset') {
-                    // 加载规则集模式的自定义规则
                     try {
                         const rulesetCustom = await RulesConfigManager.getRulesetCustomRules();
+                        if (!isMounted) return;
                         setRulesetCustomRules(rulesetCustom || '');
+                        console.log('规则集自定义规则加载完成');
                     } catch (error) {
                         console.error('Failed to load ruleset custom rules:', error);
+                        if (!isMounted) return;
                         setRulesetCustomRules('');
                     }
                 }
                 
+                console.log('5. 所有设置加载完成');
+                if (!isMounted) return;
                 setIsLoaded(true);
+                
             } catch (error) {
                 console.error('Failed to load settings:', error);
+                if (!isMounted) return;
+                setError(error instanceof Error ? error.message : 'Failed to load settings');
                 setIsLoaded(true);
             }
         };
 
         loadSettings();
+
+        // 清理函数
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     // 处理规则集切换 - 立即保存
