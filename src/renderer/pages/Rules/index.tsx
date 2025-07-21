@@ -194,7 +194,9 @@ const Rules: React.FC = () => {
                             prev.map((rs) => ({
                                 ...rs,
                                 enabled:
-                                    ruleSetConfig[rs.id] !== undefined ? ruleSetConfig[rs.id] : rs.enabled
+                                    ruleSetConfig[rs.id] !== undefined
+                                        ? ruleSetConfig[rs.id]
+                                        : rs.enabled
                             }))
                         );
                     }
@@ -322,7 +324,9 @@ const Rules: React.FC = () => {
             <div className='rules-header'>
                 <div className='rules-title'>
                     <h2>{appLang?.rules?.title || 'Routing Rules'}</h2>
-                    <p className='rules-subtitle'>{appLang?.rules?.subtitle || 'Configure routing rules'}</p>
+                    <p className='rules-subtitle'>
+                        {appLang?.rules?.subtitle || 'Configure routing rules'}
+                    </p>
                 </div>
             </div>
 
@@ -354,21 +358,29 @@ const Rules: React.FC = () => {
                         onClick={() => handleModeChange('ruleset')}
                     >
                         <span>{appLang?.rules?.mode_ruleset || 'Rule Sets'}</span>
-                        <small>{appLang?.rules?.mode_ruleset_desc || 'Use predefined rule collections'}</small>
+                        <small>
+                            {appLang?.rules?.mode_ruleset_desc || 'Use predefined rule collections'}
+                        </small>
                     </button>
                     <button
                         className={classNames('mode-tab', { active: ruleMode === 'blacklist' })}
                         onClick={() => handleModeChange('blacklist')}
                     >
                         <span>{appLang?.rules?.mode_blacklist || 'Blacklist'}</span>
-                        <small>{appLang?.rules?.mode_blacklist_desc || 'Specify what goes through proxy'}</small>
+                        <small>
+                            {appLang?.rules?.mode_blacklist_desc ||
+                                'Specify what goes through proxy'}
+                        </small>
                     </button>
                     <button
                         className={classNames('mode-tab', { active: ruleMode === 'whitelist' })}
                         onClick={() => handleModeChange('whitelist')}
                     >
                         <span>{appLang?.rules?.mode_whitelist || 'Whitelist'}</span>
-                        <small>{appLang?.rules?.mode_whitelist_desc || 'Specify what connects directly'}</small>
+                        <small>
+                            {appLang?.rules?.mode_whitelist_desc ||
+                                'Specify what connects directly'}
+                        </small>
                     </button>
                 </div>
             </div>
@@ -378,7 +390,10 @@ const Rules: React.FC = () => {
                 <div className='ruleset-mode'>
                     <div className='ruleset-header'>
                         <h3>{appLang?.rules?.select_rule_sets || 'Select Rule Sets'}</h3>
-                        <p>{appLang?.rules?.select_rule_sets_desc || 'Choose from predefined rule collections'}</p>
+                        <p>
+                            {appLang?.rules?.select_rule_sets_desc ||
+                                'Choose from predefined rule collections'}
+                        </p>
                     </div>
 
                     <div className='ruleset-categories'>
@@ -513,7 +528,10 @@ const Rules: React.FC = () => {
                 <div className='custom-rules-mode'>
                     <div className='mode-description'>
                         <h3>{appLang?.rules?.mode_blacklist || 'Blacklist Mode'}</h3>
-                        <p>{appLang?.rules?.mode_blacklist_desc || 'Specify what goes through proxy'}</p>
+                        <p>
+                            {appLang?.rules?.mode_blacklist_desc ||
+                                'Specify what goes through proxy'}
+                        </p>
                     </div>
 
                     <div className='rules-editor'>
@@ -538,7 +556,10 @@ app:chrome.exe'
                 <div className='custom-rules-mode'>
                     <div className='mode-description'>
                         <h3>{appLang?.rules?.mode_whitelist || 'Whitelist Mode'}</h3>
-                        <p>{appLang?.rules?.mode_whitelist_desc || 'Specify what connects directly'}</p>
+                        <p>
+                            {appLang?.rules?.mode_whitelist_desc ||
+                                'Specify what connects directly'}
+                        </p>
                     </div>
 
                     <div className='rules-editor'>

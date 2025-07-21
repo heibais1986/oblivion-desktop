@@ -282,7 +282,8 @@ const urdu: Language = {
         mode_blacklist_desc: 'پراکسی کے ذریعے کیا جائے گا، اس کی وضاحت کریں',
         mode_whitelist_desc: 'براہ راست کیا جڑے گا، اس کی وضاحت کریں',
         select_rule_sets: 'قواعد کے سیٹ منتخب کریں',
-        select_rule_sets_desc: 'Loyalsoldier/clash-rules پر مبنی پہلے سے طے شدہ قواعد کے مجموعوں میں سے انتخاب کریں',
+        select_rule_sets_desc:
+            'Loyalsoldier/clash-rules پر مبنی پہلے سے طے شدہ قواعد کے مجموعوں میں سے انتخاب کریں',
         direct_connection: 'براہ راست کنکشن',
         proxy_connection: 'پراکسی کنکشن',
         block_reject: 'بلاک/مسترد',

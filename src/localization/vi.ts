@@ -282,7 +282,8 @@ const vietnamese: Language = {
         mode_blacklist_desc: 'Chỉ định những gì đi qua proxy',
         mode_whitelist_desc: 'Chỉ định những gì kết nối trực tiếp',
         select_rule_sets: 'Chọn bộ quy tắc',
-        select_rule_sets_desc: 'Chọn từ các bộ quy tắc được xác định trước dựa trên Loyalsoldier/clash-rules',
+        select_rule_sets_desc:
+            'Chọn từ các bộ quy tắc được xác định trước dựa trên Loyalsoldier/clash-rules',
         direct_connection: 'Kết nối trực tiếp',
         proxy_connection: 'Kết nối proxy',
         block_reject: 'Chặn/Từ chối',

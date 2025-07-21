@@ -61,7 +61,7 @@ export class RulesConfigManager {
                 if (res.key === this.CONFIG_KEY) {
                     // 移除监听器避免内存泄漏
                     ipcRenderer.removeListener('settings', handleResponse);
-                    
+
                     try {
                         const config = res.value ? JSON.parse(res.value) : defaultRulesConfig;
                         resolve({ ...defaultRulesConfig, ...config });
@@ -73,7 +73,7 @@ export class RulesConfigManager {
             };
 
             ipcRenderer.on('settings', handleResponse);
-            
+
             ipcRenderer.sendMessage('settings', {
                 mode: 'get',
                 key: this.CONFIG_KEY
@@ -93,7 +93,7 @@ export class RulesConfigManager {
             };
 
             ipcRenderer.on('settings', handleResponse);
-            
+
             ipcRenderer.sendMessage('settings', {
                 mode: 'set',
                 key: this.CONFIG_KEY,
