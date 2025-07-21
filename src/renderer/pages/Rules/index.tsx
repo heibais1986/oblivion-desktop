@@ -393,29 +393,6 @@ const Rules: React.FC = () => {
         }
     }, [ruleMode, ruleSets, customRules, rulesetCustomRules, isConnected, isLoading, appLang]);
 
-    // 保存当前规则到系统设置
-    const saveCurrentRulesToSettings = useCallback(
-        async (
-            mode: RuleMode,
-            currentRuleSets: RuleSet[],
-            currentCustomRules: string,
-            rulesetCustom?: string
-        ) => {
-            try {
-                const finalRules = generateFinalRulesForMode(
-                    mode,
-                    currentRuleSets,
-                    currentCustomRules,
-                    rulesetCustom
-                );
-                await settings.set('routingRules', finalRules);
-            } catch (error) {
-                console.error('Failed to save rules to settings:', error);
-            }
-        },
-        [generateFinalRulesForMode]
-    );
-
     // 为指定模式生成最终规则
     const generateFinalRulesForMode = useCallback(
         (
@@ -485,6 +462,29 @@ const Rules: React.FC = () => {
     const generateFinalRules = useCallback((): string => {
         return generateFinalRulesForMode(ruleMode, ruleSets, customRules, rulesetCustomRules);
     }, [ruleMode, ruleSets, customRules, rulesetCustomRules, generateFinalRulesForMode]);
+
+    // 保存当前规则到系统设置
+    const saveCurrentRulesToSettings = useCallback(
+        async (
+            mode: RuleMode,
+            currentRuleSets: RuleSet[],
+            currentCustomRules: string,
+            rulesetCustom?: string
+        ) => {
+            try {
+                const finalRules = generateFinalRulesForMode(
+                    mode,
+                    currentRuleSets,
+                    currentCustomRules,
+                    rulesetCustom
+                );
+                await settings.set('routingRules', finalRules);
+            } catch (error) {
+                console.error('Failed to save rules to settings:', error);
+            }
+        },
+        [generateFinalRulesForMode]
+    );
 
     if (!isLoaded) {
         return (
