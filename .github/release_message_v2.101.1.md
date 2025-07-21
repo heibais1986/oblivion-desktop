@@ -54,9 +54,9 @@ https://github.com/heibais1986/oblivion-desktop/issues
 ### 🎯 Three Powerful Modes:
 
 - [x] **Rule Sets Mode**: Choose from 12 predefined rule collections
-  - **Direct**: Private, LAN CIDR, Apple, iCloud, CN CIDR, Direct
-  - **Proxy**: Google, GFW, Proxy, TLD-NOT-CN, Telegram CIDR
-  - **Block**: Reject (Ad domains)
+    - **Direct**: Private, LAN CIDR, Apple, iCloud, CN CIDR, Direct
+    - **Proxy**: Google, GFW, Proxy, TLD-NOT-CN, Telegram CIDR
+    - **Block**: Reject (Ad domains)
 - [x] **Blacklist Mode**: Specify what traffic goes through proxy
 - [x] **Whitelist Mode**: Specify what traffic connects directly
 
@@ -73,9 +73,9 @@ https://github.com/heibais1986/oblivion-desktop/issues
 2. **Click the "Rules" tab** at the bottom navigation
 3. **Choose Your Mode**: Rule Sets, Blacklist, or Whitelist
 4. **Configure Rules**:
-   - **Rule Sets**: Toggle predefined rule collections on/off
-   - **Blacklist**: Enter domains/IPs that should use proxy
-   - **Whitelist**: Enter domains/IPs that should connect directly
+    - **Rule Sets**: Toggle predefined rule collections on/off
+    - **Blacklist**: Enter domains/IPs that should use proxy
+    - **Whitelist**: Enter domains/IPs that should connect directly
 5. **Preview & Save**: Check the generated rules and save changes
 
 ### 🎯 Predefined Rule Sets Explained:
@@ -208,6 +208,7 @@ https://github.com/heibais1986/oblivion-desktop/issues
 ## 🆕 What's New in v2.101.1
 
 ### Visual Rules Management
+
 Replace the old text-based rule editor with an intuitive visual interface:
 
 - **Card-based Layout**: Each rule displayed as an individual card
@@ -217,6 +218,7 @@ Replace the old text-based rule editor with an intuitive visual interface:
 - **Drag & Drop**: Reorder rules by priority (coming soon)
 
 ### Enhanced User Experience
+
 - **Responsive Design**: Works on all screen sizes
 - **Dark/Light Theme**: Automatic theme switching
 - **Keyboard Shortcuts**: Power user features
@@ -224,6 +226,7 @@ Replace the old text-based rule editor with an intuitive visual interface:
 - **Rule Statistics**: See how many rules are active
 
 ### Multi-language Support
+
 The new Rules tab is now available in 13 languages:
 🇺🇸 English • 🇮🇷 Persian • 🇨🇳 Chinese • 🇷🇺 Russian • 🇹🇷 Turkish • 🇮🇩 Indonesian • 🇸🇦 Arabic • 🇧🇷 Portuguese • 🇻🇳 Vietnamese • 🇵🇰 Urdu • 🇪🇸 Spanish • 🇲🇲 Burmese • 🇪🇹 Amharic
 

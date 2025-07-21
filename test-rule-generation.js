@@ -17,11 +17,11 @@ const RULE_SETS = [
 ];
 
 function generateRules() {
-    const enabledRuleSets = RULE_SETS.filter(rs => rs.enabled);
+    const enabledRuleSets = RULE_SETS.filter((rs) => rs.enabled);
     const allRules = [];
-    
-    enabledRuleSets.forEach(ruleSet => {
-        ruleSet.rules.forEach(rule => {
+
+    enabledRuleSets.forEach((ruleSet) => {
+        ruleSet.rules.forEach((rule) => {
             if (ruleSet.category === 'block') {
                 allRules.push(`domain:!${rule.replace(/^DOMAIN-SUFFIX,/, '')}`);
             } else if (ruleSet.category === 'direct') {
@@ -34,7 +34,7 @@ function generateRules() {
             }
         });
     });
-    
+
     return allRules.join('\n');
 }
 

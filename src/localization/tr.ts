@@ -282,7 +282,8 @@ const turkish: Language = {
         mode_blacklist_desc: 'Proxy üzerinden geçecekleri belirtin',
         mode_whitelist_desc: 'Doğrudan bağlanacakları belirtin',
         select_rule_sets: 'Kural Setlerini Seç',
-        select_rule_sets_desc: 'Loyalsoldier/clash-rules tabanlı önceden tanımlanmış kural koleksiyonlarından seçin',
+        select_rule_sets_desc:
+            'Loyalsoldier/clash-rules tabanlı önceden tanımlanmış kural koleksiyonlarından seçin',
         direct_connection: 'Doğrudan Bağlantı',
         proxy_connection: 'Proxy Bağlantısı',
         block_reject: 'Engelle/Reddet',

@@ -278,7 +278,8 @@ const english: Language = {
         mode_blacklist_desc: 'Specify what goes through proxy',
         mode_whitelist_desc: 'Specify what connects directly',
         select_rule_sets: 'Select Rule Sets',
-        select_rule_sets_desc: 'Choose from predefined rule collections based on Loyalsoldier/clash-rules',
+        select_rule_sets_desc:
+            'Choose from predefined rule collections based on Loyalsoldier/clash-rules',
         direct_connection: 'Direct Connection',
         proxy_connection: 'Proxy Connection',
         block_reject: 'Block/Reject',

@@ -279,7 +279,8 @@ const persian: Language = {
         mode_blacklist_desc: 'مشخص کنید چه چیزی از پروکسی عبور کند',
         mode_whitelist_desc: 'مشخص کنید چه چیزی مستقیماً متصل شود',
         select_rule_sets: 'انتخاب مجموعه قوانین',
-        select_rule_sets_desc: 'از مجموعه‌های قانون از پیش تعریف شده بر اساس Loyalsoldier/clash-rules انتخاب کنید',
+        select_rule_sets_desc:
+            'از مجموعه‌های قانون از پیش تعریف شده بر اساس Loyalsoldier/clash-rules انتخاب کنید',
         direct_connection: 'اتصال مستقیم',
         proxy_connection: 'اتصال پروکسی',
         block_reject: 'مسدود/رد',

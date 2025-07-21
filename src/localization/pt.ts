@@ -284,7 +284,8 @@ const brazilianPortuguese: Language = {
         mode_blacklist_desc: 'Especifique o que passa pelo proxy',
         mode_whitelist_desc: 'Especifique o que se conecta diretamente',
         select_rule_sets: 'Selecionar Conjuntos de Regras',
-        select_rule_sets_desc: 'Escolha entre coleções de regras predefinidas baseadas em Loyalsoldier/clash-rules',
+        select_rule_sets_desc:
+            'Escolha entre coleções de regras predefinidas baseadas em Loyalsoldier/clash-rules',
         direct_connection: 'Conexão Direta',
         proxy_connection: 'Conexão Proxy',
         block_reject: 'Bloquear/Rejeitar',

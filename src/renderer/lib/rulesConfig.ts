@@ -78,7 +78,7 @@ export class RulesConfigManager {
 
     // 保存完整配置
     public static async saveConfig(config: RulesConfig): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             ipcRenderer.sendMessage('settings', {
                 mode: 'set',
                 key: this.CONFIG_KEY,

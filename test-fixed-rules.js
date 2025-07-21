@@ -30,17 +30,17 @@ const RULE_SETS = [
 function generateFinalRulesForMode(mode, currentRuleSets, currentCustomRules) {
     switch (mode) {
         case 'ruleset':
-            const enabledRuleSets = currentRuleSets.filter(rs => rs.enabled);
+            const enabledRuleSets = currentRuleSets.filter((rs) => rs.enabled);
             const allRules = [];
-            
+
             // 按优先级排序：block > direct > proxy
             const sortedRuleSets = enabledRuleSets.sort((a, b) => {
                 const priority = { block: 0, direct: 1, proxy: 2 };
                 return priority[a.category] - priority[b.category];
             });
-            
-            sortedRuleSets.forEach(ruleSet => {
-                ruleSet.rules.forEach(rule => {
+
+            sortedRuleSets.forEach((ruleSet) => {
+                ruleSet.rules.forEach((rule) => {
                     if (ruleSet.category === 'block') {
                         // 阻止规则：使用!前缀表示例外（这些域名走代理）
                         allRules.push(`domain:!${rule.replace(/^DOMAIN-SUFFIX,/, '')}`);
@@ -58,14 +58,14 @@ function generateFinalRulesForMode(mode, currentRuleSets, currentCustomRules) {
                     // proxy 类型的规则不需要添加到直连列表中，因为默认就是走代理
                 });
             });
-            
+
             // 使用换行符连接规则，这是解析器期望的格式
             return allRules.join('\n');
-            
+
         case 'blacklist':
         case 'whitelist':
             return currentCustomRules;
-            
+
         default:
             return '';
     }

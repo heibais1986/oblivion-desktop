@@ -280,7 +280,8 @@ const indonesia: Language = {
         mode_blacklist_desc: 'Tentukan apa yang melalui proxy',
         mode_whitelist_desc: 'Tentukan apa yang terhubung langsung',
         select_rule_sets: 'Pilih Set Aturan',
-        select_rule_sets_desc: 'Pilih dari koleksi aturan yang telah ditentukan berdasarkan Loyalsoldier/clash-rules',
+        select_rule_sets_desc:
+            'Pilih dari koleksi aturan yang telah ditentukan berdasarkan Loyalsoldier/clash-rules',
         direct_connection: 'Koneksi Langsung',
         proxy_connection: 'Koneksi Proxy',
         block_reject: 'Blokir/Tolak',

@@ -85,9 +85,7 @@ export default function Landing() {
                 netStats={netStats}
                 dataUsage={dataUsage}
             />
-            {shortcut && (
-                <Tabs active='landing' proxyMode={proxyMode || 'none'} />
-            )}
+            {shortcut && <Tabs active='landing' proxyMode={proxyMode || 'none'} />}
             <Toaster
                 position='bottom-center'
                 reverseOrder={false}

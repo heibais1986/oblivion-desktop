@@ -25,10 +25,10 @@ function parseRoutingRules(routingRules) {
 
     routingRules
         .split('\n')
-        .map(line => line.trim().replace(/,$/, ''))
+        .map((line) => line.trim().replace(/,$/, ''))
         .filter(Boolean)
-        .forEach(line => {
-            const [prefix, value] = line.split(':').map(part => part.trim());
+        .forEach((line) => {
+            const [prefix, value] = line.split(':').map((part) => part.trim());
             if (!value) return;
 
             switch (prefix) {
@@ -69,17 +69,10 @@ console.log(parsedResult.processSet);
 console.log('');
 
 // 测试不同的应用程序名称格式
-const testCases = [
-    'wechat.exe',
-    'WeChat.exe', 
-    'WECHAT.EXE',
-    'wechat',
-    'WeChat',
-    'WECHAT'
-];
+const testCases = ['wechat.exe', 'WeChat.exe', 'WECHAT.EXE', 'wechat', 'WeChat', 'WECHAT'];
 
 console.log('测试不同格式的应用程序名称:');
-testCases.forEach(appName => {
+testCases.forEach((appName) => {
     const testRule = `app:${appName}`;
     const result = parseRoutingRules(testRule);
     console.log(`${appName} -> ${result.processSet[0]}`);

@@ -281,7 +281,8 @@ const russian: Language = {
         mode_blacklist_desc: 'Указать, что идет через прокси',
         mode_whitelist_desc: 'Указать, что подключается напрямую',
         select_rule_sets: 'Выбрать наборы правил',
-        select_rule_sets_desc: 'Выберите из предопределенных коллекций правил на основе Loyalsoldier/clash-rules',
+        select_rule_sets_desc:
+            'Выберите из предопределенных коллекций правил на основе Loyalsoldier/clash-rules',
         direct_connection: 'Прямое соединение',
         proxy_connection: 'Прокси соединение',
         block_reject: 'Блокировать/Отклонить',

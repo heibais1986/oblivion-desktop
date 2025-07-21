@@ -275,7 +275,8 @@ const arabic: Language = {
         mode_blacklist_desc: 'تحديد ما يمر عبر البروكسي',
         mode_whitelist_desc: 'تحديد ما يتصل مباشرة',
         select_rule_sets: 'اختيار مجموعات القواعد',
-        select_rule_sets_desc: 'اختر من مجموعات القواعد المحددة مسبقاً بناءً على Loyalsoldier/clash-rules',
+        select_rule_sets_desc:
+            'اختر من مجموعات القواعد المحددة مسبقاً بناءً على Loyalsoldier/clash-rules',
         direct_connection: 'الاتصال المباشر',
         proxy_connection: 'اتصال البروكسي',
         block_reject: 'حظر/رفض',
