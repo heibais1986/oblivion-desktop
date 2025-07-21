@@ -6,6 +6,7 @@ import useTranslate from '../../../localization/useTranslate';
 import { useStore } from '../../store';
 import { settingsHaveChangedToast } from '../../lib/toasts';
 import { defaultSettings } from '../../../defaultSettings';
+import Nav from '../../components/Nav';
 import Tabs from '../../components/Tabs';
 import { RulesConfigManager, RuleMode } from '../../lib/rulesConfig';
 import './Rules.css';
@@ -320,15 +321,12 @@ const Rules: React.FC = () => {
     }
 
     return (
-        <div className='rules-page'>
-            <div className='rules-header'>
-                <div className='rules-title'>
-                    <h2>{appLang?.rules?.title || 'Routing Rules'}</h2>
-                    <p className='rules-subtitle'>
-                        {appLang?.rules?.subtitle || 'Configure routing rules'}
-                    </p>
-                </div>
-            </div>
+        <>
+            <Nav title={appLang?.rules?.title || 'Routing Rules'} />
+            <div className={classNames('myApp', 'normalPage')}>
+                <div className='container'>
+                    <Tabs active='rules' proxyMode={proxyMode} />
+                    <div className='rules-page'>
 
             {proxyMode !== 'none' && (
                 <div
@@ -578,8 +576,15 @@ ip:192.168.0.0/16'
                 </div>
             )}
 
-            <Toaster />
-        </div>
+                    </div>
+                </div>
+            </div>
+            <Toaster
+                position='bottom-center'
+                reverseOrder={false}
+                containerStyle={{ bottom: '70px' }}
+            />
+        </>
     );
 };
 
